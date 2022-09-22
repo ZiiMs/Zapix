@@ -4,6 +4,6 @@
 
 @layer base {
   html {
-    @apply text-main-light-300 bg-main-black-700;
+    @apply text-main-light-300 bg-main-black-600;
   }
 }
