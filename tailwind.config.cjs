@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'main-light': {
+        'rad-light': {
           900: '#3F3F3F',
           800: '#545454',
           700: '#6A6A6A',
@@ -16,7 +16,7 @@ module.exports = {
           100: '#EAEAEA',
           50: '#FFFFFF',
         },
-        'main-black': {
+        'rad-black': {
           900: '#131313',
           800: '#181818',
           700: '#1E1E1E',
@@ -28,6 +28,58 @@ module.exports = {
           100: '#3F3F3F',
           50: '#444444',
         },
+        'rad-red': {
+          900: '#620000',
+          800: '#6F0505',
+          700: '#7C0B0B',
+          600: '#891212',
+          500: '#961B1B',
+          400: '#A32424',
+          300: '#B02F2F',
+          200: '#BC3B3B',
+          100: '#C94848',
+          50: '#D65656',
+        },
+      },
+      keyframes: {
+        roundedHover: {
+          '0%': {
+            borderRadius: '9999px',
+          },
+          '50%': {
+            borderRadius: '24px',
+          },
+          '100%': {
+            borderRadius: '16px',
+          },
+        },
+        enter: {
+          from: {
+            opacity: 0,
+            transform: 'scale(0.5)',
+            transition: 'all 150ms',
+          },
+          to: {
+            opacity: 100,
+            transform: 'scale(1)',
+            transition: 'all 150ms',
+          },
+        },
+        blurBackdrop: {
+          from: {
+            opacity: 0,
+            transition: 'all 150ms',
+          },
+          to: {
+            opacity: '20',
+            transition: 'all 150ms',
+          },
+        },
+      },
+      animation: {
+        modelBackdrop: 'blurBackdrop 150ms linear 1 forwards',
+        roundedOn: 'roundedHover 250ms linear 1 forwards',
+        enter: 'enter 150ms linear 1 forwards',
       },
     },
   },

@@ -25,7 +25,7 @@ const CustomImage: React.FC<ImageProps> = ({
       src={src}
       alt={name}
       className={classNames(
-        'w-[44px] h-[44px] items-center justify-center select-none cursor-pointer text-center flex',
+        'w-[44px] h-[44px] hover:animate-roundedOn items-center justify-center select-none cursor-pointer text-center flex',
         className
       )}
       {...rest}
@@ -33,7 +33,7 @@ const CustomImage: React.FC<ImageProps> = ({
   ) : (
     <div
       className={classNames(
-        'w-[44px] h-[44px] items-center justify-center select-none cursor-pointer text-center flex',
+        'w-[44px] h-[44px] hover:animate-roundedOn items-center justify-center select-none cursor-pointer text-center flex',
         className
       )}
       {...rest}
