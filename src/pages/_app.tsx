@@ -1,24 +1,34 @@
+/* eslint-disable @typescript-eslint/ban-types */
 // src/pages/_app.tsx
 import { httpBatchLink } from '@trpc/client/links/httpBatchLink';
 import { loggerLink } from '@trpc/client/links/loggerLink';
 import { withTRPC } from '@trpc/next';
+import { NextPage } from 'next';
 import type { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
-import type { AppType } from 'next/app';
+import type { AppProps, AppType } from 'next/app';
+import { ReactElement, ReactNode } from 'react';
 import superjson from 'superjson';
-import Layout from '../components/layout';
 import type { AppRouter } from '../server/router';
 import '../styles/globals.css';
+
+export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout<T = {}> = AppProps<T> & {
+  Component: NextPageWithLayout;
+};
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
-}) => {
+}: AppPropsWithLayout<{session: Session | null}>) => {
+  const getLayout = Component.getLayout ?? ((page) => page);
+
   return (
     <SessionProvider session={session}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      {getLayout(<Component {...pageProps} />)}
     </SessionProvider>
   );
 };
