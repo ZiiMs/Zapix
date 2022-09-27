@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-types */
-// src/pages/_app.tsx
 import { httpBatchLink } from '@trpc/client/links/httpBatchLink';
 import { loggerLink } from '@trpc/client/links/loggerLink';
 import { withTRPC } from '@trpc/next';

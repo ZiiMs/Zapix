@@ -1,10 +1,11 @@
+import { signOut } from 'next-auth/react';
 import React, { useState } from 'react';
 import { trpc } from '../../utils/trpc';
 import CustomImage from '../CustomImage';
 import CreateServerModal from '../modal/CreateServer';
 
 const Navbar: React.FC = () => {
-  const [openModal, setOpenModal] = useState(false)
+  const [openModal, setOpenModal] = useState(false);
   const { data } = trpc.useQuery(['server.get.all']);
 
   return (
@@ -39,7 +40,7 @@ const Navbar: React.FC = () => {
             onClick={(e) => {
               e.preventDefault();
               console.log('Workgin');
-              setOpenModal(true)
+              setOpenModal(true);
             }}
           >
             <svg
@@ -58,12 +59,19 @@ const Navbar: React.FC = () => {
         </div>
       </div>
       <div className={'h-screen w-60 bg-rad-black-700 p-2'}>
-        <button className='w-full p-2 bg-rad-black-400 rounded-md text-start'>
+        <button
+          className='w-full p-2 bg-rad-black-400 rounded-md text-start'
+          onClick={() => {
+            signOut();
+          }}
+        >
           Test
         </button>
       </div>
-      <CreateServerModal isOpen={openModal} onClose={() => setOpenModal(false)} />
-        
+      <CreateServerModal
+        isOpen={openModal}
+        onClose={() => setOpenModal(false)}
+      />
     </nav>
   );
 };
