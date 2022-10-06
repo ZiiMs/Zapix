@@ -19,7 +19,6 @@ export const UserRouter = createProtectedRouter()
           friendsRelation: true,
         },
       });
-      console.log('Friends', friends);
       if (friends) {
         const FriendsArray = friends.Friends.concat(friends.friendsRelation);
         return FriendsArray;

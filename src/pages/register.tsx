@@ -7,7 +7,6 @@ import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
 
 const Register: NextPageWithLayout = () => {
-  const hello = trpc.useQuery(['example.hello', { text: 'from tRPC' }]);
   const ref = useRef<HTMLInputElement>(null);
   const [username, setUsername] = useState('');
   const [isSignOut, setSignOut] = useState(false);
