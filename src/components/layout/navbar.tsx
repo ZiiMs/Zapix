@@ -6,7 +6,8 @@ import CreateServerModal from '../modal/CreateServer';
 
 const Navbar: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
-  const { data } = trpc.useQuery(['server.get.all']);
+  const { data: Servers } = trpc.useQuery(['server.get.all']);
+  const { data: Friends } = trpc.useQuery(['user.friends.get']);
   const { data: session } = useSession({ required: true });
 
   return (
@@ -25,8 +26,8 @@ const Navbar: React.FC = () => {
           </button>
           <hr className='w-full mt-2 border-rad-black-500' />
           <div className='flex flex-col mt-2 space-y-2'>
-            {data
-              ? data.map((server) => (
+            {Servers
+              ? Servers.map((server) => (
                   <CustomImage
                     key={server.id}
                     name={server.name}
@@ -65,17 +66,36 @@ const Navbar: React.FC = () => {
             'h-full w-60 flex flex-col relative justify-between bg-rad-black-700 '
           }
         >
-          <div className='h-full p-2'>
-            <button
-              className='w-full p-2 bg-rad-black-400 rounded-md text-start'
-              onClick={() => {
-                signOut();
-              }}
-            >
-              Test
+          <div className='h-full p-2 space-y-2'>
+            <button className='w-full p-2 bg-rad-black-400 rounded-md text-start'>
+              Friends
             </button>
+            {Friends
+              ? Friends.map((friend) => (
+                  <button
+                    className='bg-rad-black-700 gap-x-2 hover:bg-rad-black-500/75 rounded w-full p-2 flex flex-row items-center '
+                    onClick={(e) => {
+                      e.preventDefault();
+                      console.log("selected friend", friend.username);
+                    }}
+                    key={friend.id}
+                  >
+                    <CustomImage
+                      name={friend.username ?? ""}
+                      src={friend.image ?? undefined}
+                      className={
+                        'rounded-full w-[2rem] h-[2rem] bg-rad-black-500 font-bold text-lg'
+                      }
+                      onClick={() => {
+                        signOut();
+                      }}
+                    />
+                    {friend.username}
+                  </button>
+                ))
+              : null}
           </div>
-          <div className='bg-rad-black-900 p-2 flex flex-row '>
+          <div className='bg-rad-black-900 p-2 flex flex-row items-center '>
             <CustomImage
               name={session?.user?.name ?? ''}
               src={session?.user?.image ?? undefined}
@@ -86,7 +106,9 @@ const Navbar: React.FC = () => {
                 signOut();
               }}
             />
-            {session?.user?.username}
+            <span className='px-2 font-semibold'>
+              {session?.user?.username}
+            </span>
           </div>
         </div>
         <CreateServerModal

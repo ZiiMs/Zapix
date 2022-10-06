@@ -13,7 +13,7 @@ const Register: NextPageWithLayout = () => {
   const [isSignOut, setSignOut] = useState(false);
   const router = useRouter();
   const { mutate: CreateUser, status: createStatus } = trpc.useMutation(
-    ['auth.create'],
+    ['user.create'],
     {
       onSuccess: async (data) => {
         console.log('NewUser: ', data);
@@ -22,7 +22,7 @@ const Register: NextPageWithLayout = () => {
     }
   );
   const { mutate: DeleteUser, status: deleteStatus } = trpc.useMutation(
-    ['auth.delete'],
+    ['user.delete'],
     {
       onSuccess: (data) => {
         console.log('DeletedUser', data);

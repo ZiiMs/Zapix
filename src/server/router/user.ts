@@ -8,6 +8,25 @@ export const UserRouter = createProtectedRouter()
       return ctx.session;
     },
   })
+  .query('friends.get', {
+    async resolve({ ctx }) {
+      const friends = await ctx.prisma.user.findFirst({
+        where: {
+          id: ctx.session.user.id,
+        },
+        select: {
+          Friends: true,
+          friendsRelation: true,
+        },
+      });
+      console.log('Friends', friends);
+      if (friends) {
+        const FriendsArray = friends.Friends.concat(friends.friendsRelation);
+        return FriendsArray;
+      }
+      return friends;
+    },
+  })
   .mutation('create', {
     input: z.object({
       username: z.string(),

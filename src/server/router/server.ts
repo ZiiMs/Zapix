@@ -5,7 +5,15 @@ import { createProtectedRouter, createRouter } from './context';
 export const serverRouter = createRouter()
   .query('get.all', {
     async resolve({ ctx }) {
-      const data = await ctx.prisma.servers.findMany();
+      const data = await ctx.prisma.servers.findMany({
+        where: {
+          Users: {
+            some: {
+              id: ctx.session?.user?.id,
+            },
+          },
+        },
+      });
 
       return data;
     },
@@ -25,6 +33,11 @@ export const serverRouter = createRouter()
         data: {
           name: input.name,
           image: input.image ?? undefined,
+          Users: {
+            connect: {
+              id: ctx.session?.user?.id,
+            },
+          },
         },
       });
       return server;
