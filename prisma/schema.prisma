@@ -15,10 +15,6 @@ datasource db {
     referentialIntegrity = "prisma"
 }
 
-model Example {
-    id String @id @default(cuid())
-}
-
 // Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
@@ -47,14 +43,18 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String     @id @default(cuid())
     name          String?
-    email         String?   @unique
+    username      String?    @unique
+    isRegistered  Boolean    @default(false)
+    email         String?    @unique
     emailVerified DateTime?
     image         String?
     accounts      Account[]
     sessions      Session[]
     Servers       Servers[]
+    Messages      Messages[]
+    Channels      Channels[]
 }
 
 model VerificationToken {
@@ -72,4 +72,23 @@ model Servers {
     createdAt DateTime @default(now())
     updatedAt DateTime @default(now()) @updatedAt
     Users     User[]
+}
+
+model Channels {
+    id       String     @id @default(cuid())
+    name     String
+    private  Boolean
+    Users    User[]
+    Messages Messages[]
+}
+
+model Messages {
+    id         String    @id @default(cuid())
+    body       String
+    User       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+    Channels   Channels? @relation(fields: [channelsId], references: [id], onDelete: Cascade)
+    channelsId String?
+    userId     String
+    createdAt  DateTime  @default(now())
+    updatedAt  DateTime  @default(now())
 }

@@ -8,7 +8,6 @@ import { NextPageWithLayout } from './_app';
 const Login: NextPageWithLayout = () => {
   const hello = trpc.useQuery(['example.hello', { text: 'from tRPC' }]);
 
-
   return (
     <>
       <Head>
@@ -20,7 +19,7 @@ const Login: NextPageWithLayout = () => {
         <button
           onClick={(e) => {
             e.preventDefault();
-            signIn('google');
+            signIn('google', { redirect: false, callbackUrl: '/register' });e
           }}
           className='w-full outline outline-1 p-2 rounded font-medium outline-rad-black-400 text-rad-light-900 bg-white hover:bg-rad-light-100 active:bg-rad-light-100 active:scale-95'
         >

@@ -11,11 +11,18 @@ export const authOptions: NextAuthOptions = {
   // Include user.id on session
   callbacks: {
     session({ session, user }) {
+      console.log('User', user);
       if (session.user) {
         session.user.id = user.id;
+        session.user.username = user.username;
+        session.user.isRegistered = user.isRegistered;
       }
       return session;
     },
+  },
+  pages: {
+    signIn: '/login',
+    newUser: '/register',
   },
   // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),

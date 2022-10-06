@@ -6,7 +6,7 @@ const LoginLayout: React.FC<{ children: PropsWithChildren<ReactNode> }> = ({
   children,
 }) => {
   const router = useRouter();
-  const { status } = useSession({
+  const { status, data } = useSession({
     required: true,
     onUnauthenticated: () => {
       return;
@@ -14,7 +14,14 @@ const LoginLayout: React.FC<{ children: PropsWithChildren<ReactNode> }> = ({
   });
 
   if (status === 'authenticated') {
-    router.push('/');
+    if (!data.user?.isRegistered) {
+      if (router.asPath !== '/register') {
+        router.push('/register');
+        console.log(router.asPath);
+      }
+    } else {
+      router.push('/');
+    }
   }
   return (
     <div className='flex flex-row'>

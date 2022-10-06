@@ -7,15 +7,14 @@ type ImageProps = Partial<
 > & {
   src?: string;
   name: string;
+
   className?: string;
-} & (
-    | { width: number | string; height: number | string }
-    | { layout: 'fixed' | 'fill' | 'intrinsic' | 'responsive' | undefined }
-  );
+};
 
 const CustomImage: React.FC<ImageProps> = ({
   name,
   src,
+
   className,
   ...rest
 }) => {
@@ -25,7 +24,7 @@ const CustomImage: React.FC<ImageProps> = ({
       src={src}
       alt={name}
       className={classNames(
-        'w-[44px] h-[44px] hover:animate-roundedOn items-center justify-center select-none cursor-pointer text-center flex',
+        'items-center justify-center select-none cursor-pointer text-center flex',
         className
       )}
       {...rest}
@@ -33,7 +32,7 @@ const CustomImage: React.FC<ImageProps> = ({
   ) : (
     <div
       className={classNames(
-        'w-[44px] h-[44px] hover:animate-roundedOn items-center justify-center select-none cursor-pointer text-center flex',
+        'items-center justify-center select-none cursor-pointer text-center flex',
         className
       )}
       {...rest}
