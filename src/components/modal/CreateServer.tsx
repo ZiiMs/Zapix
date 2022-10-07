@@ -1,7 +1,7 @@
+import { trpc } from '@/utils/trpc';
 import classNames from 'classnames';
 import React, { useState } from 'react';
 import Modal from '.';
-import { trpc } from '../../utils/trpc';
 
 const CreateServerModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,

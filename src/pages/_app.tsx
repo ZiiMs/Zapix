@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
+import type { AppRouter } from '@/server/router';
+import '@/styles/globals.css';
 import { httpBatchLink } from '@trpc/client/links/httpBatchLink';
 import { loggerLink } from '@trpc/client/links/loggerLink';
 import { withTRPC } from '@trpc/next';
@@ -8,8 +10,6 @@ import { SessionProvider } from 'next-auth/react';
 import type { AppProps, AppType } from 'next/app';
 import { ReactElement, ReactNode } from 'react';
 import superjson from 'superjson';
-import type { AppRouter } from '../server/router';
-import '../styles/globals.css';
 
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;

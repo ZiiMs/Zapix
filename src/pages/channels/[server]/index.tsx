@@ -1,11 +1,16 @@
+import Layout from '@/components/layout';
+import Me from '@/components/Pages/me';
+import { NextPageWithLayout } from '@/pages/_app';
 import Head from 'next/head';
-import { ReactElement } from 'react';
-import Layout from '../components/layout';
-import { trpc } from '../utils/trpc';
-import { NextPageWithLayout } from './_app';
+import { useRouter } from 'next/router';
+import React, { ReactElement } from 'react';
 
-const Home: NextPageWithLayout = () => {
-
+const Index: NextPageWithLayout = () => {
+  const router = useRouter();
+  const { server } = router.query;
+  if (server === 'me') {
+    return <Me />;
+  }
   return (
     <>
       <Head>
@@ -14,51 +19,51 @@ const Home: NextPageWithLayout = () => {
         <link rel='icon' href='/favicon.ico' />
       </Head>
       <div className='flex flex-col'>
-      <div>Test</div>
         <div>Test</div>
         <div>Test</div>
         <div>Test</div>
-        <div>Test</div>        <div>Test</div>
+        <div>Test</div>
+        <div>Test</div> <div>Test</div>
         <div>Test</div>
         <div>Test</div>
         <div>Test</div>
-        <div>Test</div>        <div>Test</div>
+        <div>Test</div> <div>Test</div>
         <div>Test</div>
         <div>Test</div>
         <div>Test</div>
-        <div>Test</div>        <div>Test</div>
+        <div>Test</div> <div>Test</div>
         <div>Test</div>
         <div>Test</div>
         <div>Test</div>
-        <div>Test</div>        <div>Test</div>
+        <div>Test</div> <div>Test</div>
         <div>Test</div>
         <div>Test</div>
         <div>Test</div>
-        <div>Test</div>        <div>Test</div>
+        <div>Test</div> <div>Test</div>
         <div>Test</div>
         <div>Test</div>
         <div>Test</div>
-        <div>Test</div>        <div>Test</div>
+        <div>Test</div> <div>Test</div>
         <div>Test</div>
         <div>Test</div>
         <div>Test</div>
-        <div>Test</div>        <div>Test</div>
+        <div>Test</div> <div>Test</div>
         <div>Test</div>
         <div>Test</div>
         <div>Test</div>
-        <div>Test</div>        <div>Test</div>
+        <div>Test</div> <div>Test</div>
         <div>Test</div>
         <div>Test</div>
         <div>Test</div>
-        <div>Test</div>        <div>Test</div>
+        <div>Test</div> <div>Test</div>
         <div>Test</div>
         <div>Test</div>
         <div>Test</div>
-        <div>Test</div>        <div>Test</div>
+        <div>Test</div> <div>Test</div>
         <div>Test</div>
         <div>Test</div>
         <div>Test</div>
-        <div>Test</div>        <div>Test</div>
+        <div>Test</div> <div>Test</div>
         <div>Test</div>
         <div>Test</div>
         <div>Test</div>
@@ -72,7 +77,7 @@ const getLayout = (page: ReactElement) => {
   return <Layout>{page}</Layout>;
 };
 
-Home.getLayout = getLayout;
+Index.getLayout = getLayout;
 
-export default Home;
+export default Index;
 

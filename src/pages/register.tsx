@@ -1,9 +1,9 @@
+import LoginLayout from '@/components/layout/login';
+import { trpc } from '@/utils/trpc';
 import { signOut, useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { ReactElement, useEffect, useRef, useState } from 'react';
-import LoginLayout from '../components/layout/login';
-import { trpc } from '../utils/trpc';
 import { NextPageWithLayout } from './_app';
 
 const Register: NextPageWithLayout = () => {
@@ -20,6 +20,7 @@ const Register: NextPageWithLayout = () => {
       },
     }
   );
+
   const { mutate: DeleteUser, status: deleteStatus } = trpc.useMutation(
     ['user.delete'],
     {
@@ -29,6 +30,7 @@ const Register: NextPageWithLayout = () => {
       },
     }
   );
+  
   const { data: session, status } = useSession();
 
   useEffect(() => {

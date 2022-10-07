@@ -1,8 +1,7 @@
-import { getProviders, signIn } from 'next-auth/react';
+import LoginLayout from '@/components/layout/login';
+import { signIn } from 'next-auth/react';
 import Head from 'next/head';
-import { ReactElement, useEffect } from 'react';
-import LoginLayout from '../components/layout/login';
-import { trpc } from '../utils/trpc';
+import { ReactElement } from 'react';
 import { NextPageWithLayout } from './_app';
 
 const Login: NextPageWithLayout = () => {
