@@ -6,6 +6,10 @@ import React, { ReactElement } from 'react';
 const Channel: NextPageWithLayout = () => {
   const router = useRouter();
   const { server, channel } = router.query
+  if(server ==='me') {
+    return (<div>DMS!</div>)
+  }
+
   return (
     <div>
       Channel:{channel}Server:{server}

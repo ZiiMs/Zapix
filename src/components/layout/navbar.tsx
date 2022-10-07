@@ -19,7 +19,7 @@ const Navbar: React.FC<{ setTitle: (title: string) => void }> = ({
       <div className='flex flex-row w-full max-w-xs'>
         <div className='flex flex-row w-full'>
           <div className=' p-2 w-full bg-rad-black-800 max-w-[4rem] items-center flex flex-col'>
-            <Link href={"/channels/me"}>
+            <Link href={'/channels/me'}>
               <button className='rounded-full hover:animate-roundedOn bg-rad-black-500 p-2 flex w-[44px] h-[44px] items-center justify-center'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
@@ -35,18 +35,18 @@ const Navbar: React.FC<{ setTitle: (title: string) => void }> = ({
             <div className='flex flex-col mt-2 space-y-2'>
               {Servers
                 ? Servers.map((server) => (
-                    <CustomImage
+                    <Link
                       key={server.id}
-                      name={server.name}
-                      src={server.image ?? undefined}
-                      className={
-                        'rounded-full hover:animate-roundedOn w-[44px] h-[44px] bg-rad-black-500 font-bold text-lg'
-                      }
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setTitle(server.name);
-                      }}
-                    />
+                      href={`/channels/${encodeURIComponent(server.id)}`}
+                    >
+                      <CustomImage
+                        name={server.name}
+                        src={server.image ?? undefined}
+                        className={
+                          'rounded-full hover:animate-roundedOn w-[44px] h-[44px] bg-rad-black-500 font-bold text-lg'
+                        }
+                      />
+                    </Link>
                   ))
                 : null}
               <button
@@ -83,24 +83,21 @@ const Navbar: React.FC<{ setTitle: (title: string) => void }> = ({
               </button>
               {Friends
                 ? Friends.map((friend) => (
-                    <button
-                      className='bg-rad-black-700 gap-x-2 hover:bg-rad-black-500/75 rounded w-full p-2 flex flex-row items-center '
-                      onClick={(e) => {
-                        e.preventDefault();
-                        console.log('selected friend', friend.username);
-                        setTitle(friend.username ?? '');
-                      }}
+                    <Link
                       key={friend.id}
+                      href={`/channels/me/${encodeURIComponent(friend.id)}`}
                     >
-                      <CustomImage
-                        name={friend.username ?? ''}
-                        src={friend.image ?? undefined}
-                        className={
-                          'rounded-full w-[2rem] h-[2rem] bg-rad-black-500 font-bold text-lg'
-                        }
-                      />
-                      {friend.username}
-                    </button>
+                      <button className='bg-rad-black-700 gap-x-2 hover:bg-rad-black-500/75 rounded w-full p-2 flex flex-row items-center '>
+                        <CustomImage
+                          name={friend.username ?? ''}
+                          src={friend.image ?? undefined}
+                          className={
+                            'rounded-full w-[2rem] h-[2rem] bg-rad-black-500 font-bold text-lg'
+                          }
+                        />
+                        {friend.username}
+                      </button>
+                    </Link>
                   ))
                 : null}
             </div>
