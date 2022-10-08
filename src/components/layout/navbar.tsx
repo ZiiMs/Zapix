@@ -11,7 +11,7 @@ const Navbar: React.FC<{ setTitle: (title: string) => void }> = ({
 }) => {
   const [openModal, setOpenModal] = useState(false);
   const { data: Servers } = trpc.useQuery(['server.get.all']);
-  const { data: Friends } = trpc.useQuery(['user.friends.get']);
+  const { data: Friends } = trpc.useQuery(['user.friends.getAll']);
   const { data: session } = useSession({ required: true });
 
   return (
@@ -85,17 +85,17 @@ const Navbar: React.FC<{ setTitle: (title: string) => void }> = ({
                 ? Friends.map((friend) => (
                     <Link
                       key={friend.id}
-                      href={`/channels/me/${encodeURIComponent(friend.id)}`}
+                      href={`/channels/me/${encodeURIComponent(friend.Friend.id)}`}
                     >
                       <button className='bg-rad-black-700 gap-x-2 hover:bg-rad-black-500/75 rounded w-full p-2 flex flex-row items-center '>
                         <CustomImage
-                          name={friend.username ?? ''}
-                          src={friend.image ?? undefined}
+                          name={friend.Friend.username ?? ''}
+                          src={friend.Friend.image ?? undefined}
                           className={
                             'rounded-full w-[2rem] h-[2rem] bg-rad-black-500 font-bold text-lg'
                           }
                         />
-                        {friend.username}
+                        {friend.Friend.username}
                       </button>
                     </Link>
                   ))

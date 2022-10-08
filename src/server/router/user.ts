@@ -8,21 +8,49 @@ export const UserRouter = createProtectedRouter()
       return ctx.session;
     },
   })
-  .query('friends.get', {
+  .query('friends.getAll', {
     async resolve({ ctx }) {
-      const friends = await ctx.prisma.user.findFirst({
+      const friends = await ctx.prisma.friend.findMany({
         where: {
-          id: ctx.session.user.id,
+          userId: ctx.session.user.id,
         },
-        select: {
-          Friends: true,
-          friendsRelation: true,
+        include: {
+          Friend: true,
+          Messages: true,
         },
       });
-      if (friends) {
-        const FriendsArray = friends.Friends.concat(friends.friendsRelation);
-        return FriendsArray;
-      }
+
+      // const friends = await ctx.prisma.user.findFirst({
+      //   where: {
+      //     id: ctx.session.user.id,
+      //   },
+      //   select: {
+      //     Friends: true,
+      //     friendsRelation: true,
+      //   },
+      // });
+      // if (friends) {
+      //   const FriendsArray = friends.Friends.concat(friends.friendsRelation);
+      //   return FriendsArray;
+      // }
+      return friends;
+    },
+  })
+  .query('friends.get', {
+    input: z.object({
+      friend: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const friends = await ctx.prisma.friend.findFirstOrThrow({
+        where: {
+          friendId: input.friend,
+        },
+        include: {
+          Friend: true,
+          Messages: true,
+        },
+      });
+
       return friends;
     },
   })
