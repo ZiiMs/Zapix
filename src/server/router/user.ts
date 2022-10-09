@@ -47,7 +47,16 @@ export const UserRouter = createProtectedRouter()
         },
         include: {
           Friend: true,
-          Messages: true,
+          Messages: {
+            include: {
+              Friend: {
+                include: {
+                  Friend: true,
+                  User: true,
+                },
+              },
+            },
+          },
         },
       });
 

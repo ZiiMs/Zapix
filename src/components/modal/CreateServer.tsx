@@ -115,7 +115,7 @@ const CreateServerModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
     <div className='w-full'>
       <div className='flex flex-col gap-2'>
         <input
-          className='bg-transparent hover:outline-rad-black-400 outline-rad-black-600 placeholder:text-sm outline-2 placeholder:italic placeholder:text-rad-light-300/30 outline p-1 rounded'
+          className='bg-transparent  hover:outline-rad-black-400 outline-rad-black-600 placeholder:text-sm outline-2 placeholder:italic placeholder:text-rad-light-300/30 outline p-1 rounded'
           placeholder='Code'
         />
         <label>

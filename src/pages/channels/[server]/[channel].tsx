@@ -1,3 +1,4 @@
+import DirectMessages from '@/components/DirectMessages';
 import Layout from '@/components/layout';
 import { NextPageWithLayout } from '@/pages/_app';
 import { trpc } from '@/utils/trpc';
@@ -15,12 +16,13 @@ const Channel: NextPageWithLayout = () => {
     ]);
 
     return (
-      <div>
+      <div className='flex w-full h-full flex-col items-start justify-end p-2'>
         {Friend?.Messages.map((message) => (
-          <div key={message.id}>
-            <span>{message.text}</span>
-          </div>
+          <DirectMessages key={message.id} Message={message} />
         ))}
+        <div className='flex flex-row p-2 bg-rad-black-300 w-full rounded'>
+          <input className='bg-transparent p-1 w-full outline-none ' />
+        </div>
       </div>
     );
   }
