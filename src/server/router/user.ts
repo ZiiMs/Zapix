@@ -19,6 +19,7 @@ export const UserRouter = createProtectedRouter()
           Messages: true,
         },
       });
+      console.log(friends);
 
       // const friends = await ctx.prisma.user.findFirst({
       //   where: {
@@ -49,7 +50,7 @@ export const UserRouter = createProtectedRouter()
           Friend: true,
           Messages: {
             include: {
-              Friend: {
+              Reciever: {
                 include: {
                   Friend: true,
                   User: true,

@@ -43,20 +43,21 @@ model Session {
 }
 
 model User {
-    id            String     @id @default(cuid())
-    name          String?
-    username      String?    @unique
-    isRegistered  Boolean    @default(false)
-    email         String?    @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
-    Servers       Servers[]
-    Messages      Messages[]
-    Channels      Channels[]
-    Friend        Friend[]   @relation("Friend")
-    FriendOf      Friend[]   @relation()
+    id             String           @id @default(cuid())
+    name           String?
+    username       String?          @unique
+    isRegistered   Boolean          @default(false)
+    email          String?          @unique
+    emailVerified  DateTime?
+    image          String?
+    accounts       Account[]
+    sessions       Session[]
+    Servers        Servers[]
+    Messages       Messages[]
+    Channels       Channels[]
+    Friend         Friend[]         @relation("Friend")
+    FriendOf       Friend[]         @relation()
+    DirectMessages DirectMessages[]
 }
 
 model Friend {
@@ -69,12 +70,14 @@ model Friend {
 }
 
 model DirectMessages {
-    id        String   @id @default(cuid())
-    text      String
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
-    Friend    Friend   @relation(fields: [friendId], references: [id])
-    friendId  String
+    id         String   @id @default(cuid())
+    text       String
+    createdAt  DateTime @default(now())
+    updatedAt  DateTime @default(now()) @updatedAt
+    Sender     User     @relation(fields: [senderId], references: [id])
+    senderId   String
+    Reciever   Friend   @relation(fields: [recieverId], references: [id])
+    recieverId String
 }
 
 model VerificationToken {

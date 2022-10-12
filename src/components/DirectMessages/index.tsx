@@ -4,7 +4,7 @@ import CustomImage from '../CustomImage';
 
 const DirectMessages: React.FC<{
   Message: DirectMessages & {
-    Friend: Friend & {
+    Reciever: Friend & {
       User: User;
       Friend: User;
     };
@@ -14,8 +14,8 @@ const DirectMessages: React.FC<{
     <div className='flex flex-row items-start justify-start w-full h-fit py-2'>
       <div className='px-2'>
         <CustomImage
-          name={Message.Friend.Friend.username ?? ''}
-          src={Message.Friend.Friend.image ?? undefined}
+          name={Message.Reciever.Friend.username ?? ''}
+          src={Message.Reciever.Friend.image ?? undefined}
           className={
             'rounded-full w-[2.5rem] h-[2.5rem] bg-rad-black-500 font-bold text-lg'
           }
@@ -23,7 +23,7 @@ const DirectMessages: React.FC<{
       </div>
       <div className='flex flex-col'>
         <div className='flex flex-row gap-x-2 items-start text-start justify-start'>
-          <span className='font-bold '>{Message.Friend.Friend.username}</span>
+          <span className='font-bold '>{Message.Reciever.Friend.username}</span>
           <span className='italic text-rad-light-400/30 text-sm'>
             {Message.createdAt.toLocaleDateString()}
           </span>
