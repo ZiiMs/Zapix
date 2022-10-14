@@ -1,18 +1,38 @@
 import { trpc } from '@/utils/trpc';
+import classNames from 'classnames';
 import { signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
-import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import useTitleStore from 'src/stores/titleStore';
+import shallow from 'zustand/shallow';
 import CustomImage from '../CustomImage';
 import CreateServerModal from '../modal/CreateServer';
 import Header from './header';
 
-const Navbar: React.FC<{ setTitle: (title: string) => void }> = ({
-  setTitle,
-}) => {
+const Navbar: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
+  const router = useRouter();
+  const { server } = router.query;
   const { data: Servers } = trpc.useQuery(['server.get.all']);
   const { data: Friends } = trpc.useQuery(['user.friends.getAll']);
   const { data: session } = useSession({ required: true });
+  const { setTitle } = useTitleStore(
+    (state) => ({ setTitle: state.setTitle }),
+    shallow
+  );
+
+  const safeChan = () => {
+    if (server === 'me') {
+      return router.query.friend as string;
+    } else if (server !== null) {
+      return router.query.channel as string;
+    }
+  };
+
+  useEffect(() => {
+    console.log('Friends', Friends);
+  }, [Friends]);
 
   return (
     <nav className='flex flex-row'>
@@ -20,7 +40,12 @@ const Navbar: React.FC<{ setTitle: (title: string) => void }> = ({
         <div className='flex flex-row w-full'>
           <div className=' p-2 w-full bg-rad-black-800 max-w-[4rem] items-center flex flex-col'>
             <Link href={'/channels/me'}>
-              <button className='rounded-full hover:animate-roundedOn bg-rad-black-500 p-2 flex w-[44px] h-[44px] items-center justify-center'>
+              <button
+                className='rounded-full hover:animate-roundedOn bg-rad-black-500 p-2 flex w-[44px] h-[44px] items-center justify-center'
+                onClick={() => {
+                  setTitle('Friends');
+                }}
+              >
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   viewBox='0 0 24 24'
@@ -45,6 +70,9 @@ const Navbar: React.FC<{ setTitle: (title: string) => void }> = ({
                         className={
                           'rounded-full hover:animate-roundedOn w-[44px] h-[44px] bg-rad-black-500 font-bold text-lg'
                         }
+                        onClick={() => {
+                          setTitle(server.name);
+                        }}
                       />
                     </Link>
                   ))
@@ -81,25 +109,37 @@ const Navbar: React.FC<{ setTitle: (title: string) => void }> = ({
               <button className='w-full p-2 bg-rad-black-400 rounded-md text-start'>
                 Friends
               </button>
-              {Friends
-                ? Friends.map((friend) => (
-                    <Link
-                      key={friend.id}
-                      href={`/channels/me/${encodeURIComponent(friend.Friend.id)}`}
+              {Friends ? (
+                Friends.map((friend) => (
+                  <Link
+                    key={friend.id}
+                    href={`/channels/me/${encodeURIComponent(
+                      friend.Friend.id
+                    )}`}
+                  >
+                    <button
+                      className={classNames(
+                        'gap-x-2  rounded w-full p-2 flex flex-row items-center',
+                        friend.Friend.id === safeChan() ? 'bg-rad-black-500' : 'bg-rad-black-700 hover:bg-rad-black-500/75'
+                      )}
+                      onClick={() => {
+                        setTitle(friend.Friend.username ?? '');
+                      }}
                     >
-                      <button className='bg-rad-black-700 gap-x-2 hover:bg-rad-black-500/75 rounded w-full p-2 flex flex-row items-center '>
-                        <CustomImage
-                          name={friend.Friend.username ?? ''}
-                          src={friend.Friend.image ?? undefined}
-                          className={
-                            'rounded-full w-[2rem] h-[2rem] bg-rad-black-500 font-bold text-lg'
-                          }
-                        />
-                        {friend.Friend.username}
-                      </button>
-                    </Link>
-                  ))
-                : null}
+                      <CustomImage
+                        name={friend.Friend.username ?? ''}
+                        src={friend.Friend.image ?? undefined}
+                        className={
+                          'rounded-full w-[2rem] h-[2rem] bg-rad-black-500 font-bold text-lg'
+                        }
+                      />
+                      {friend.Friend.username}
+                    </button>
+                  </Link>
+                ))
+              ) : (
+                <span>You have no friends!</span>
+              )}
             </div>
             <div className='bg-rad-black-900 p-2 flex flex-row items-center '>
               <CustomImage

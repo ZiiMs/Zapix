@@ -1,5 +1,4 @@
 import Layout from '@/components/layout';
-import Me from '@/components/Pages/me';
 import { NextPageWithLayout } from '@/pages/_app';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -8,9 +7,7 @@ import React, { ReactElement } from 'react';
 const Index: NextPageWithLayout = () => {
   const router = useRouter();
   const { server } = router.query;
-  if (server === 'me') {
-    return <Me />;
-  }
+
   return (
     <>
       <Head>

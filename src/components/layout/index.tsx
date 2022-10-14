@@ -13,7 +13,6 @@ const Layout: React.FC<{ children: PropsWithChildren<ReactNode> }> = ({
   children,
 }) => {
   const router = useRouter();
-  const [title, setTitle] = useState('Friends');
   const { status } = useSession({
     required: true,
     onUnauthenticated() {
@@ -40,13 +39,9 @@ const Layout: React.FC<{ children: PropsWithChildren<ReactNode> }> = ({
 
   return (
     <div className='flex flex-row overflow-y-hidden'>
-      <Navbar
-        setTitle={(e: string) => {
-          setTitle(e);
-        }}
-      />
+      <Navbar />
       <div className='flex flex-col w-full h-screen overflow-y-hidden'>
-        <Header title={title} />
+        <Header/>
 
         <main className='w-full h-full items-center justify-center flex overflow-y-auto scrollbar-thin scrollbar-thumb-rounded scrollbar-track-rounded scrollbar-track-rad-black-200 scrollbar-thumb-rad-black-900'>
           {children}

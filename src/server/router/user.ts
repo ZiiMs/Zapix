@@ -10,6 +10,7 @@ export const UserRouter = createProtectedRouter()
   })
   .query('friends.getAll', {
     async resolve({ ctx }) {
+      console.log("Freidns!Q@?#")
       const friends = await ctx.prisma.friend.findMany({
         where: {
           userId: ctx.session.user.id,
@@ -19,7 +20,7 @@ export const UserRouter = createProtectedRouter()
           Messages: true,
         },
       });
-      console.log(friends);
+      console.log("FoundFriends!@",friends);
 
       // const friends = await ctx.prisma.user.findFirst({
       //   where: {

@@ -70,7 +70,7 @@ model Friend {
 }
 
 model DirectMessages {
-    id         String   @id @default(cuid())
+    id         Int      @id @default(autoincrement())
     text       String
     createdAt  DateTime @default(now())
     updatedAt  DateTime @default(now()) @updatedAt

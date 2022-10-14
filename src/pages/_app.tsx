@@ -3,6 +3,7 @@ import type { AppRouter } from '@/server/router';
 import '@/styles/globals.css';
 import { httpBatchLink } from '@trpc/client/links/httpBatchLink';
 import { loggerLink } from '@trpc/client/links/loggerLink';
+import { createWSClient, wsLink } from '@trpc/client/links/wsLink';
 import { withTRPC } from '@trpc/next';
 import { NextPage } from 'next';
 import type { Session } from 'next-auth';
@@ -22,7 +23,7 @@ type AppPropsWithLayout<T = {}> = AppProps<T> & {
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
-}: AppPropsWithLayout<{session: Session | null}>) => {
+}: AppPropsWithLayout<{ session: Session | null }>) => {
   const getLayout = Component.getLayout ?? ((page) => page);
 
   return (
@@ -36,6 +37,16 @@ const getBaseUrl = () => {
   if (typeof window !== 'undefined') return ''; // browser should use relative url
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
   return `http://localhost:${process.env.PORT ?? 3000}`; // dev SSR should use localhost
+};
+
+const getEndingLink = () => {
+  if (typeof window === 'undefined') {
+    return httpBatchLink({ url: `${getBaseUrl()}/api/trpc` });
+  }
+  const wsClient = createWSClient({
+    url: `ws://localhost:3001`,
+  });
+  return wsLink<AppRouter>({ client: wsClient });
 };
 
 export default withTRPC<AppRouter>({
@@ -53,7 +64,7 @@ export default withTRPC<AppRouter>({
             process.env.NODE_ENV === 'development' ||
             (opts.direction === 'down' && opts.result instanceof Error),
         }),
-        httpBatchLink({ url }),
+        getEndingLink(),
       ],
       url,
       transformer: superjson,
