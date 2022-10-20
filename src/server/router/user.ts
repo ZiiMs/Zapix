@@ -18,14 +18,14 @@ export const UserRouter = createProtectedRouter()
         select: {
           FriendOf: {
             select: {
+              id: true,
               User: true,
-              Messages: true,
             },
           },
           Friend: {
             select: {
+              id: true,
               Friend: true,
-              Messages: true,
             },
           },
         },

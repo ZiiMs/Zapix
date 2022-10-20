@@ -27,6 +27,8 @@ export const MessagesRouter = createProtectedRouter()
           if (input.channelId === data.channelId) {
             console.log('Working?');
             emit.data(data.dm);
+          } else {
+            console.log('Naah not found!');
           }
         };
 
@@ -49,10 +51,9 @@ export const MessagesRouter = createProtectedRouter()
       const { cursor, friendId } = input;
       const items = await ctx.prisma.directMessages.findMany({
         where: {
-          OR: [
-            { recieverId: friendId, senderId: ctx.session.user.id },
-            { senderId: friendId, recieverId: ctx.session.user.id },
-          ],
+          Reciever: {
+            id: friendId,
+          },
         },
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: {

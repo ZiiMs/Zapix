@@ -4,14 +4,16 @@ import LayoutWrapper from '@/components/layout/layoutWrapper';
 import Navbar from '@/components/layout/navbar';
 import { NextPageWithLayout } from '@/pages/_app';
 import { trpc } from '@/utils/trpc';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useCallback, useEffect, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useState } from 'react';
 
 const Friend: NextPageWithLayout = () => {
   const router = useRouter();
   const { friend } = router.query;
   const [message, setMessage] = useState('');
-  const friendId = friend as string;
+  const { data: session, status } = useSession();
+  const channelId = friend as string;
 
   const { mutate } = trpc.useMutation(['dm.create'], {
     onSuccess: (data) => {
@@ -21,7 +23,7 @@ const Friend: NextPageWithLayout = () => {
   });
 
   const postQuery = trpc.useInfiniteQuery(
-    ['dm.infiniteDms', { limit: 1, friendId: friendId }],
+    ['dm.infiniteDms', { limit: 50, friendId: channelId }],
     {
       getPreviousPageParam: (d) => d.nextCursor,
     }
@@ -35,6 +37,7 @@ const Friend: NextPageWithLayout = () => {
     return msgs;
   });
   type DM = NonNullable<typeof dms>[number];
+
   const addDMS = useCallback((incoming: DM[]) => {
     console.log('weopirj');
     setDms((curr) => {
@@ -52,12 +55,16 @@ const Friend: NextPageWithLayout = () => {
 
   useEffect(() => {
     const msgs = postQuery.data?.pages.map((page) => page.items).flat();
-    if (msgs) {
+    console.log(msgs);
+    if (msgs !== undefined) {
+      setDms([]);
       addDMS(msgs);
     }
   }, [postQuery.data?.pages, addDMS]);
 
-  trpc.useSubscription(['dm.onAdd', { channelId: friendId }], {
+  if (!session || !session.user) return <div>Session ont found!</div>;
+
+  trpc.useSubscription(['dm.onAdd', { channelId: channelId }], {
     onNext: (data) => {
       addDMS([data]);
       console.log('FoundData', data);
@@ -88,7 +95,7 @@ const Friend: NextPageWithLayout = () => {
                 mutate({
                   reciever: friend as string,
                   text: message,
-                  channelId: friendId,
+                  channelId: channelId,
                 });
               }
             }}

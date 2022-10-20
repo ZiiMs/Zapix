@@ -12,20 +12,12 @@ const FriendsList: React.FC = () => {
   const { data: Friends } = trpc.useQuery(['user.friends.getAll']);
   const router = useRouter();
   const [openModal, setOpenModal] = useState(false);
-  const { server } = router.query;
 
   const { setTitle } = useTitleStore(
     (state) => ({ setTitle: state.setTitle }),
     shallow
   );
 
-  const safeChan = () => {
-    if (server === 'me') {
-      return router.query.friend as string;
-    } else if (server !== null) {
-      return router.query.channel as string;
-    }
-  };
   return (
     <>
       <div className='h-full p-2 space-y-2'>
@@ -69,13 +61,13 @@ const FriendsList: React.FC = () => {
         {Friends ? (
           Friends.map((friend) => (
             <Link
-              key={friend.Friend.id}
-              href={`/channels/me/${encodeURIComponent(friend.Friend.id)}`}
+              key={friend.id}
+              href={`/channels/me/${encodeURIComponent(friend.id)}`}
             >
               <button
                 className={classNames(
                   'gap-x-2  rounded w-full p-2 flex flex-row items-center',
-                  friend.Friend.id === safeChan()
+                  friend.id === (router.query.friend as string)
                     ? 'bg-rad-black-500'
                     : 'bg-rad-black-700 hover:bg-rad-black-500/75'
                 )}

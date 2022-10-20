@@ -31,12 +31,7 @@ const Navbar: React.FC<{ type?: Types }> = ({ type = Types.Friends }) => {
   const DmButton = () => {
     if (router.asPath.toLowerCase().includes('/channels/me')) {
       return (
-        <button
-          className='rounded-full hover:animate-roundedOn bg-rad-black-500 p-2 flex w-[44px] h-[44px] items-center justify-center'
-          onClick={() => {
-            setTitle('Friends');
-          }}
-        >
+        <button className='rounded-full hover:animate-roundedOn bg-rad-black-500 p-2 flex w-[44px] h-[44px] items-center justify-center'>
           <svg
             xmlns='http://www.w3.org/2000/svg'
             viewBox='0 0 24 24'
