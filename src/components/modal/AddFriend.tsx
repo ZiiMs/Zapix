@@ -2,6 +2,7 @@ import { trpc } from '@/utils/trpc';
 import classNames from 'classnames';
 import React, { useState } from 'react';
 import Modal from '.';
+import Input from '../input';
 
 const AddFriendModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,
@@ -38,9 +39,12 @@ const AddFriendModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
         {header}
         <div className='w-full '>
           <div className='flex flex-col gap-2'>
-            <input
+            <Input
               className='bg-transparent hover:outline-rad-black-400 outline-rad-black-600 placeholder:text-sm outline-2 placeholder:italic placeholder:text-rad-light-300/30 outline p-1 rounded'
               value={friendName}
+              onSubmit={() => {
+                addFriend({ username: friendName });
+              }}
               onChange={(e) => {
                 e.preventDefault();
                 setFriendName(e.currentTarget.value);
@@ -50,7 +54,6 @@ const AddFriendModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
           </div>
         </div>
         <div className='flex flex-row justify-between'>
-
           <button
             className='bg-rad-black-600 w-full font-semibold rounded py-2 px-3 first-letter:uppercase'
             disabled={isDisabled}

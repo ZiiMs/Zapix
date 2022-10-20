@@ -72,8 +72,8 @@ model Friend {
 model DirectMessages {
     id         Int      @id @default(autoincrement())
     text       String
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @default(now()) @updatedAt
+    createdAt  DateTime @unique @default(now())
+    updatedAt  DateTime @updatedAt
     Sender     User     @relation(fields: [senderId], references: [id])
     senderId   String
     Reciever   Friend   @relation(fields: [recieverId], references: [id])

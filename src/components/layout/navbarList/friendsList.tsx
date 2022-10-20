@@ -77,6 +77,8 @@ const FriendsList: React.FC = () => {
               >
                 <CustomImage
                   name={friend.Friend.username ?? ''}
+                  width={32}
+                  height={32}
                   src={friend.Friend.image ?? undefined}
                   className={
                     'rounded-full w-[2rem] h-[2rem] bg-rad-black-500 font-bold text-lg'

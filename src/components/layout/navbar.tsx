@@ -85,6 +85,8 @@ const Navbar: React.FC<{ type?: Types }> = ({ type = Types.Friends }) => {
                       <CustomImage
                         name={server.name}
                         src={server.image ?? undefined}
+                        width={44}
+                        height={44}
                         className={
                           'rounded-full hover:animate-roundedOn w-[44px] h-[44px] bg-rad-black-500 font-bold text-lg'
                         }
@@ -128,8 +130,10 @@ const Navbar: React.FC<{ type?: Types }> = ({ type = Types.Friends }) => {
               <CustomImage
                 name={session?.user?.name ?? ''}
                 src={session?.user?.image ?? undefined}
+                width={32}
+                height={32}
                 className={
-                  'rounded-full w-[2rem] h-[2rem] bg-rad-black-500 font-bold text-lg'
+                  'rounded-full bg-rad-black-500 font-bold text-lg'
                 }
                 onClick={() => {
                   signOut();

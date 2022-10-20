@@ -25,10 +25,7 @@ export const MessagesRouter = createProtectedRouter()
           channelId: string;
         }) => {
           if (input.channelId === data.channelId) {
-            console.log('Working?');
             emit.data(data.dm);
-          } else {
-            console.log('Naah not found!');
           }
         };
 
@@ -43,7 +40,7 @@ export const MessagesRouter = createProtectedRouter()
   .query('infiniteDms', {
     input: z.object({
       limit: z.number().min(1).max(100).nullish(),
-      cursor: z.number().nullish(),
+      cursor: z.string().or(z.date()).nullish(),
       friendId: z.string(),
     }),
     async resolve({ input, ctx }) {
@@ -55,10 +52,12 @@ export const MessagesRouter = createProtectedRouter()
             id: friendId,
           },
         },
-        cursor: cursor ? { id: cursor } : undefined,
+        take: limit + 1,
+        cursor: cursor ? { createdAt: cursor } : undefined,
         orderBy: {
-          id: 'asc',
+          createdAt: 'desc',
         },
+        skip: 0,
         include: {
           Sender: true,
         },
@@ -66,7 +65,7 @@ export const MessagesRouter = createProtectedRouter()
       let nextCursor: typeof cursor | null = null;
       if (items.length > limit) {
         const nextItem = items.pop();
-        nextCursor = nextItem!.id;
+        nextCursor = nextItem!.createdAt;
       }
 
       return { items, nextCursor };

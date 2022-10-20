@@ -13,8 +13,10 @@ const DirectMessages: React.FC<{
         <CustomImage
           name={Message.Sender.username ?? ''}
           src={Message.Sender.image ?? undefined}
+          width={40}
+          height={40}
           className={
-            'rounded-full w-[2.5rem] h-[2.5rem] bg-rad-black-500 font-bold text-lg'
+            'rounded-full  bg-rad-black-500 font-bold text-lg'
           }
         />
       </div>

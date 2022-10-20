@@ -2,6 +2,7 @@ import { trpc } from '@/utils/trpc';
 import classNames from 'classnames';
 import React, { useState } from 'react';
 import Modal from '.';
+import Input from '../input';
 
 const CreateServerModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,
@@ -114,9 +115,12 @@ const CreateServerModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   const join = (
     <div className='w-full'>
       <div className='flex flex-col gap-2'>
-        <input
+        <Input
           className='bg-transparent  hover:outline-rad-black-400 outline-rad-black-600 placeholder:text-sm outline-2 placeholder:italic placeholder:text-rad-light-300/30 outline p-1 rounded'
           placeholder='Code'
+          onSubmit={() => {
+            console.log('Joing');
+          }}
         />
         <label>
           Pleas enter a code above. You can find the code to a server located in

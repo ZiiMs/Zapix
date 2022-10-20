@@ -37,7 +37,6 @@ export const UserRouter = createProtectedRouter()
       let newFriends = friends?.Friend;
       if (Friends && friends) {
         newFriends = Friends.concat(friends.Friend);
-        console.log('werwerefoipedrjgoier1', newFriends, Friends);
       }
       return newFriends;
     },

@@ -1,11 +1,9 @@
 import classNames from 'classnames';
 import { url } from 'inspector';
-import { ImageProps as NextImageProps } from 'next/image';
+import Image, { ImageProps as NextImageProps } from 'next/image';
 import React from 'react';
 
-type ImageProps = Partial<
-  Omit<NextImageProps, 'width' | 'height' | 'layout'>
-> & {
+type ImageProps = Partial<NextImageProps> & {
   src?: string;
   name: string;
 
@@ -15,15 +13,18 @@ type ImageProps = Partial<
 const CustomImage: React.FC<ImageProps> = ({
   name,
   src,
-
+  width,
+  height,
   className,
   ...rest
 }) => {
   return src ? (
     // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src={encodeURI(src)}
       alt={name}
+      width={width}
+      height={height}
       className={classNames(
         'items-center justify-center select-none cursor-pointer text-center flex',
         className
