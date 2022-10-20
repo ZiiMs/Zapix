@@ -6,7 +6,7 @@ interface ITitleStore {
 }
 
 const useTitleStore = create<ITitleStore>((set) => ({
-  title: '',
+  title: 'Friends',
   setTitle: (title: string) => set({ title }),
 }));
 

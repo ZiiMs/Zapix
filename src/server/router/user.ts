@@ -10,32 +10,36 @@ export const UserRouter = createProtectedRouter()
   })
   .query('friends.getAll', {
     async resolve({ ctx }) {
-      console.log("Freidns!Q@?#")
-      const friends = await ctx.prisma.friend.findMany({
+      console.log('Freidns!Q@?#');
+      const friends = await ctx.prisma.user.findUnique({
         where: {
-          userId: ctx.session.user.id,
+          id: ctx.session.user.id,
         },
-        include: {
-          Friend: true,
-          Messages: true,
+        select: {
+          FriendOf: {
+            select: {
+              User: true,
+              Messages: true,
+            },
+          },
+          Friend: {
+            select: {
+              Friend: true,
+              Messages: true,
+            },
+          },
         },
       });
-      console.log("FoundFriends!@",friends);
-
-      // const friends = await ctx.prisma.user.findFirst({
-      //   where: {
-      //     id: ctx.session.user.id,
-      //   },
-      //   select: {
-      //     Friends: true,
-      //     friendsRelation: true,
-      //   },
-      // });
-      // if (friends) {
-      //   const FriendsArray = friends.Friends.concat(friends.friendsRelation);
-      //   return FriendsArray;
-      // }
-      return friends;
+      const Friends = friends?.FriendOf.map(({ User, ...fri }) => ({
+        ...fri,
+        Friend: User,
+      }));
+      let newFriends = friends?.Friend;
+      if (Friends && friends) {
+        newFriends = Friends.concat(friends.Friend);
+        console.log('werwerefoipedrjgoier1', newFriends, Friends);
+      }
+      return newFriends;
     },
   })
   .query('friends.get', {
@@ -77,6 +81,26 @@ export const UserRouter = createProtectedRouter()
         },
         where: {
           id: ctx.session.user.id,
+        },
+      });
+      return newUser;
+    },
+  })
+  .mutation('friend.add', {
+    input: z.object({
+      username: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const newUser = await ctx.prisma.user.update({
+        where: {
+          username: input.username,
+        },
+        data: {
+          Friend: {
+            create: {
+              friendId: ctx.session.user.id,
+            },
+          },
         },
       });
       return newUser;

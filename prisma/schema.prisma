@@ -52,7 +52,7 @@ model User {
     image          String?
     accounts       Account[]
     sessions       Session[]
-    Servers        Servers[]
+    Servers        Server[]
     Messages       Messages[]
     Channels       Channels[]
     Friend         Friend[]         @relation("Friend")
@@ -88,21 +88,24 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-model Servers {
-    id        String   @id @default(cuid())
+model Server {
+    id        String     @id @default(cuid())
     name      String
     image     String?
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @default(now()) @updatedAt
+    Channels  Channels[]
     Users     User[]
 }
 
 model Channels {
-    id       String     @id @default(cuid())
-    name     String
-    private  Boolean
-    Users    User[]
-    Messages Messages[]
+    id        String     @id @default(cuid())
+    name      String
+    private   Boolean
+    Users     User[]
+    Messages  Messages[]
+    Server    Server     @relation(fields: [serversId], references: [id])
+    serversId String
 }
 
 model Messages {

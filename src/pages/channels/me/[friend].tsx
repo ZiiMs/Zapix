@@ -1,5 +1,7 @@
 import DirectMessages from '@/components/DirectMessages';
 import Layout from '@/components/layout';
+import LayoutWrapper from '@/components/layout/layoutWrapper';
+import Navbar from '@/components/layout/navbar';
 import { NextPageWithLayout } from '@/pages/_app';
 import { trpc } from '@/utils/trpc';
 import { useRouter } from 'next/router';
@@ -10,10 +12,6 @@ const Friend: NextPageWithLayout = () => {
   const { friend } = router.query;
   const [message, setMessage] = useState('');
   const friendId = friend as string;
-  const { data: Friend } = trpc.useQuery([
-    'user.friends.get',
-    { friend: friendId },
-  ]);
 
   const { mutate } = trpc.useMutation(['dm.create'], {
     onSuccess: (data) => {
@@ -59,7 +57,7 @@ const Friend: NextPageWithLayout = () => {
     }
   }, [postQuery.data?.pages, addDMS]);
 
-  trpc.useSubscription(['dm.onAdd'], {
+  trpc.useSubscription(['dm.onAdd', { channelId: friendId }], {
     onNext: (data) => {
       addDMS([data]);
       console.log('FoundData', data);
@@ -90,6 +88,7 @@ const Friend: NextPageWithLayout = () => {
                 mutate({
                   reciever: friend as string,
                   text: message,
+                  channelId: friendId,
                 });
               }
             }}
@@ -101,7 +100,12 @@ const Friend: NextPageWithLayout = () => {
 };
 
 const getLayout = (page: ReactElement) => {
-  return <Layout>{page}</Layout>;
+  return (
+    <Layout>
+      <Navbar />
+      <LayoutWrapper>{page}</LayoutWrapper>
+    </Layout>
+  );
 };
 
 Friend.getLayout = getLayout;

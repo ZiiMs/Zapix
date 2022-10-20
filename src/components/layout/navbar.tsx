@@ -8,54 +8,77 @@ import useTitleStore from 'src/stores/titleStore';
 import shallow from 'zustand/shallow';
 import CustomImage from '../CustomImage';
 import CreateServerModal from '../modal/CreateServer';
-import Header from './header';
+import ChannelList from './navbarList/channelList';
+import FriendsList from './navbarList/friendsList';
 
-const Navbar: React.FC = () => {
+export enum Types {
+  Friends,
+  Channels,
+}
+
+const Navbar: React.FC<{ type?: Types }> = ({ type = Types.Friends }) => {
   const [openModal, setOpenModal] = useState(false);
   const router = useRouter();
   const { server } = router.query;
   const { data: Servers } = trpc.useQuery(['server.get.all']);
-  const { data: Friends } = trpc.useQuery(['user.friends.getAll']);
+
   const { data: session } = useSession({ required: true });
   const { setTitle } = useTitleStore(
     (state) => ({ setTitle: state.setTitle }),
     shallow
   );
 
-  const safeChan = () => {
-    if (server === 'me') {
-      return router.query.friend as string;
-    } else if (server !== null) {
-      return router.query.channel as string;
+  const DmButton = () => {
+    if (router.asPath.toLowerCase().includes('/channels/me')) {
+      return (
+        <button
+          className='rounded-full hover:animate-roundedOn bg-rad-black-500 p-2 flex w-[44px] h-[44px] items-center justify-center'
+          onClick={() => {
+            setTitle('Friends');
+          }}
+        >
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            viewBox='0 0 24 24'
+            fill='currentColor'
+            className='w-6 h-6'
+          >
+            <path d='M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 00-1.032-.211 50.89 50.89 0 00-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 002.433 3.984L7.28 21.53A.75.75 0 016 21v-4.03a48.527 48.527 0 01-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979z' />
+            <path d='M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 001.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.94v-4.286c0-1.505-1.125-2.811-2.664-2.94A49.392 49.392 0 0015.75 7.5z' />
+          </svg>
+        </button>
+      );
+    } else {
+      return (
+        <Link href={'/channels/me'}>
+          <button
+            className='rounded-full hover:animate-roundedOn bg-rad-black-500 p-2 flex w-[44px] h-[44px] items-center justify-center'
+            onClick={() => {
+              setTitle('Friends');
+            }}
+          >
+            <svg
+              xmlns='http://www.w3.org/2000/svg'
+              viewBox='0 0 24 24'
+              fill='currentColor'
+              className='w-6 h-6'
+            >
+              <path d='M4.913 2.658c2.075-.27 4.19-.408 6.337-.408 2.147 0 4.262.139 6.337.408 1.922.25 3.291 1.861 3.405 3.727a4.403 4.403 0 00-1.032-.211 50.89 50.89 0 00-8.42 0c-2.358.196-4.04 2.19-4.04 4.434v4.286a4.47 4.47 0 002.433 3.984L7.28 21.53A.75.75 0 016 21v-4.03a48.527 48.527 0 01-1.087-.128C2.905 16.58 1.5 14.833 1.5 12.862V6.638c0-1.97 1.405-3.718 3.413-3.979z' />
+              <path d='M15.75 7.5c-1.376 0-2.739.057-4.086.169C10.124 7.797 9 9.103 9 10.609v4.285c0 1.507 1.128 2.814 2.67 2.94 1.243.102 2.5.157 3.768.165l2.782 2.781a.75.75 0 001.28-.53v-2.39l.33-.026c1.542-.125 2.67-1.433 2.67-2.94v-4.286c0-1.505-1.125-2.811-2.664-2.94A49.392 49.392 0 0015.75 7.5z' />
+            </svg>
+          </button>
+        </Link>
+      );
     }
   };
-
-  useEffect(() => {
-    console.log('Friends', Friends);
-  }, [Friends]);
 
   return (
     <nav className='flex flex-row'>
       <div className='flex flex-row w-full max-w-xs'>
         <div className='flex flex-row w-full'>
           <div className=' p-2 w-full bg-rad-black-800 max-w-[4rem] items-center flex flex-col'>
-            <Link href={'/channels/me'}>
-              <button
-                className='rounded-full hover:animate-roundedOn bg-rad-black-500 p-2 flex w-[44px] h-[44px] items-center justify-center'
-                onClick={() => {
-                  setTitle('Friends');
-                }}
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  viewBox='0 0 24 24'
-                  fill='currentColor'
-                  className='w-6 h-6'
-                >
-                  <path d='M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z' />
-                </svg>
-              </button>
-            </Link>
+            <DmButton />
+
             <hr className='w-full mt-2 border-rad-black-500' />
             <div className='flex flex-col mt-2 space-y-2'>
               {Servers
@@ -105,42 +128,7 @@ const Navbar: React.FC = () => {
               'h-full w-60 flex flex-col relative justify-between bg-rad-black-700 '
             }
           >
-            <div className='h-full p-2 space-y-2'>
-              <button className='w-full p-2 bg-rad-black-400 rounded-md text-start'>
-                Friends
-              </button>
-              {Friends ? (
-                Friends.map((friend) => (
-                  <Link
-                    key={friend.id}
-                    href={`/channels/me/${encodeURIComponent(
-                      friend.Friend.id
-                    )}`}
-                  >
-                    <button
-                      className={classNames(
-                        'gap-x-2  rounded w-full p-2 flex flex-row items-center',
-                        friend.Friend.id === safeChan() ? 'bg-rad-black-500' : 'bg-rad-black-700 hover:bg-rad-black-500/75'
-                      )}
-                      onClick={() => {
-                        setTitle(friend.Friend.username ?? '');
-                      }}
-                    >
-                      <CustomImage
-                        name={friend.Friend.username ?? ''}
-                        src={friend.Friend.image ?? undefined}
-                        className={
-                          'rounded-full w-[2rem] h-[2rem] bg-rad-black-500 font-bold text-lg'
-                        }
-                      />
-                      {friend.Friend.username}
-                    </button>
-                  </Link>
-                ))
-              ) : (
-                <span>You have no friends!</span>
-              )}
-            </div>
+            {type === Types.Friends ? <FriendsList /> : <ChannelList />}
             <div className='bg-rad-black-900 p-2 flex flex-row items-center '>
               <CustomImage
                 name={session?.user?.name ?? ''}

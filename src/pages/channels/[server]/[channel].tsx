@@ -1,9 +1,9 @@
-import DirectMessages from '@/components/DirectMessages';
 import Layout from '@/components/layout';
+import LayoutWrapper from '@/components/layout/layoutWrapper';
+import Navbar, { Types } from '@/components/layout/navbar';
 import { NextPageWithLayout } from '@/pages/_app';
-import { trpc } from '@/utils/trpc';
 import { useRouter } from 'next/router';
-import React, { ReactElement, useState } from 'react';
+import { ReactElement } from 'react';
 
 const Channel: NextPageWithLayout = () => {
   const router = useRouter();
@@ -17,7 +17,12 @@ const Channel: NextPageWithLayout = () => {
 };
 
 const getLayout = (page: ReactElement) => {
-  return <Layout>{page}</Layout>;
+  return (
+    <Layout>
+      <Navbar type={Types.Channels} />
+      <LayoutWrapper>{page}</LayoutWrapper>
+    </Layout>
+  );
 };
 
 Channel.getLayout = getLayout;

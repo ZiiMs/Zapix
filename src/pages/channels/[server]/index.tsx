@@ -1,8 +1,10 @@
 import Layout from '@/components/layout';
+import LayoutWrapper from '@/components/layout/layoutWrapper';
+import Navbar, { Types } from '@/components/layout/navbar';
 import { NextPageWithLayout } from '@/pages/_app';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { ReactElement } from 'react';
+import { ReactElement } from 'react';
 
 const Index: NextPageWithLayout = () => {
   const router = useRouter();
@@ -71,7 +73,12 @@ const Index: NextPageWithLayout = () => {
 };
 
 const getLayout = (page: ReactElement) => {
-  return <Layout>{page}</Layout>;
+  return (
+    <Layout>
+      <Navbar type={Types.Channels} />
+      <LayoutWrapper>{page}</LayoutWrapper>
+    </Layout>
+  );
 };
 
 Index.getLayout = getLayout;

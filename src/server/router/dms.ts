@@ -9,19 +9,25 @@ const ee = new EventEmitter();
 // Example router with queries that can only be hit if the user requesting is signed in
 export const MessagesRouter = createProtectedRouter()
   .subscription('onAdd', {
-    resolve() {
+    input: z.object({
+      channelId: z.string(),
+    }),
+    resolve({ ctx, input }) {
       return new trpc.Subscription<
         DirectMessages & {
           Sender: User;
         }
       >((emit) => {
-        const onAdd = (
-          data: DirectMessages & {
+        const onAdd = (data: {
+          dm: DirectMessages & {
             Sender: User;
+          };
+          channelId: string;
+        }) => {
+          if (input.channelId === data.channelId) {
+            console.log('Working?');
+            emit.data(data.dm);
           }
-        ) => {
-          console.log('Working?');
-          emit.data(data);
         };
 
         ee.on('create', onAdd);
@@ -43,8 +49,10 @@ export const MessagesRouter = createProtectedRouter()
       const { cursor, friendId } = input;
       const items = await ctx.prisma.directMessages.findMany({
         where: {
-          recieverId: friendId,
-          senderId: ctx.session.user.id,
+          OR: [
+            { recieverId: friendId, senderId: ctx.session.user.id },
+            { senderId: friendId, recieverId: ctx.session.user.id },
+          ],
         },
         cursor: cursor ? { id: cursor } : undefined,
         orderBy: {
@@ -67,6 +75,7 @@ export const MessagesRouter = createProtectedRouter()
     input: z.object({
       text: z.string(),
       reciever: z.string(),
+      channelId: z.string(),
     }),
     async resolve({ ctx, input }) {
       if (input.reciever === '') {
@@ -85,7 +94,7 @@ export const MessagesRouter = createProtectedRouter()
           Sender: true,
         },
       });
-      ee.emit('create', newMessage);
+      ee.emit('create', { dm: newMessage, channelId: input.channelId });
       return newMessage;
     },
   })
