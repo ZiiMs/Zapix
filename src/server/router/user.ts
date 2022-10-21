@@ -1,3 +1,5 @@
+import { TRPCClientError } from '@trpc/client';
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { createProtectedRouter } from './context';
 
@@ -90,19 +92,114 @@ export const UserRouter = createProtectedRouter()
       username: z.string(),
     }),
     async resolve({ ctx, input }) {
-      const newUser = await ctx.prisma.user.update({
+      const foundFriend = await ctx.prisma.friend.count({
         where: {
-          username: input.username,
+          OR: [
+            {
+              User: {
+                username: input.username,
+              },
+              friendId: ctx.session.user.id,
+            },
+            {
+              Friend: {
+                username: input.username,
+              },
+              userId: ctx.session.user.id,
+            },
+          ],
+        },
+      });
+
+      if (foundFriend > 0) {
+        throw new TRPCError({
+          code: 'CONFLICT',
+          cause: 'Unique constraint failed',
+          message: 'That person is already your friend.',
+        });
+      }
+
+      const newUser = await ctx.prisma.user
+        .update({
+          where: {
+            username: input.username,
+          },
+          data: {
+            FriendRequests: {
+              connect: {
+                id: ctx.session.user.id,
+              },
+            },
+          },
+        })
+        .catch((err) => {
+          throw new TRPCError({
+            code: 'CONFLICT',
+            cause: err,
+            message: 'That person is already your friend.',
+          });
+        });
+      console.log('FriendRequests', newUser);
+      return newUser;
+    },
+  })
+  .query('friends.requests.getAll', {
+    async resolve({ ctx }) {
+      const friendRequests = await ctx.prisma.user.findUnique({
+        where: {
+          id: ctx.session.user.id,
+        },
+        select: {
+          FriendRequests: true,
+        },
+      });
+
+      return friendRequests;
+    },
+  })
+  .mutation('friends.requests.accept', {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const acceptedFriends = await ctx.prisma.user.update({
+        where: {
+          id: ctx.session.user.id,
         },
         data: {
+          FriendRequests: {
+            disconnect: {
+              id: input.id,
+            },
+          },
           Friend: {
             create: {
-              friendId: ctx.session.user.id,
+              friendId: input.id,
             },
           },
         },
       });
-      return newUser;
+      return acceptedFriends;
+    },
+  })
+  .mutation('friends.requests.decline', {
+    input: z.object({
+      id: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const declinedFriend = await ctx.prisma.user.update({
+        where: {
+          id: ctx.session.user.id,
+        },
+        data: {
+          FriendRequests: {
+            disconnect: {
+              id: input.id,
+            },
+          },
+        },
+      });
+      return declinedFriend;
     },
   })
   .mutation('delete', {

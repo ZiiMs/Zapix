@@ -40,7 +40,12 @@ const FriendsList: React.FC = () => {
           <span>Add New Friend</span>
         </button>
         <Link href={'/channels/me'}>
-          <button className='w-full p-2 flex space-x-2 font-bold bg-rad-black-400 rounded-md text-start'>
+          <button
+            className='w-full p-2 flex space-x-2 font-bold bg-rad-black-400 rounded-md text-start'
+            onClick={() => {
+              setTitle('Friends');
+            }}
+          >
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 24 24'

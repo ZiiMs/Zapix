@@ -43,30 +43,34 @@ model Session {
 }
 
 model User {
-    id             String           @id @default(cuid())
-    name           String?
-    username       String?          @unique
-    isRegistered   Boolean          @default(false)
-    email          String?          @unique
-    emailVerified  DateTime?
-    image          String?
-    accounts       Account[]
-    sessions       Session[]
-    Servers        Server[]
-    Messages       Messages[]
-    Channels       Channels[]
-    Friend         Friend[]         @relation("Friend")
-    FriendOf       Friend[]         @relation()
-    DirectMessages DirectMessages[]
+    id                String           @id @default(cuid())
+    name              String?
+    username          String?          @unique
+    isRegistered      Boolean          @default(false)
+    email             String?          @unique
+    emailVerified     DateTime?
+    image             String?
+    accounts          Account[]
+    sessions          Session[]
+    Servers           Server[]
+    Messages          Messages[]
+    Channels          Channels[]
+    Friend            Friend[]         @relation("Friend")
+    FriendOf          Friend[]         @relation()
+    DirectMessages    DirectMessages[]
+    FriendRequests    User[]           @relation("FriendRequests")
+    SentFriendRequets User[]           @relation("FriendRequests")
 }
 
 model Friend {
     id       String           @id @default(cuid())
-    User     User             @relation(name: "Friend", fields: [userId], references: [id])
+    User     User             @relation(name: "Friend", fields: [userId], references: [id], onDelete: Cascade)
     userId   String
     Messages DirectMessages[]
-    Friend   User             @relation(fields: [friendId], references: [id])
+    Friend   User             @relation(fields: [friendId], references: [id], onDelete: Cascade)
     friendId String
+
+    @@unique([userId, friendId])
 }
 
 model DirectMessages {
@@ -76,7 +80,7 @@ model DirectMessages {
     updatedAt  DateTime @updatedAt
     Sender     User     @relation(fields: [senderId], references: [id])
     senderId   String
-    Reciever   Friend   @relation(fields: [recieverId], references: [id])
+    Reciever   Friend   @relation(fields: [recieverId], references: [id], onDelete: Cascade)
     recieverId String
 }
 
