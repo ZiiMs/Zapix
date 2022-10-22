@@ -115,7 +115,13 @@ const Friend: NextPageWithLayout = () => {
         }}
       >
         {dms?.map((dm) => (
-          <Message key={dm.id} Message={dm} />
+          <Message
+            key={dm.id}
+            createdAt={dm.createdAt}
+            image={dm.Sender.image ?? undefined}
+            text={dm.text}
+            username={dm.Sender.username ?? ''}
+          />
         ))}
         <div ref={scrollTargetRef}></div>
       </div>
