@@ -1,3 +1,4 @@
+import { Channels, Server } from '@prisma/client';
 import { z } from 'zod';
 import { createRouter } from './context';
 
@@ -53,12 +54,30 @@ export const serverRouter = createRouter()
           Channels: {
             create: {
               name: 'General',
+              default: true,
               private: false,
             },
           },
         },
+        include: {
+          Channels: true,
+        },
       });
-      return server;
+      const updatedServer = await ctx.prisma.server.update({
+        where: {
+          id: server.id,
+        },
+        data: {
+          defaultChannelId: server.Channels[0]?.id,
+        },
+      });
+      const newServer: Server & {
+        Channels: Channels[];
+      } = {
+        ...updatedServer,
+        Channels: server.Channels,
+      };
+      return newServer;
     },
   })
   .mutation('join', {

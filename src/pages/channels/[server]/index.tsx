@@ -1,4 +1,5 @@
 import Layout from '@/components/layout';
+import Header from '@/components/layout/header';
 import LayoutWrapper from '@/components/layout/layoutWrapper';
 import Navbar, { Types } from '@/components/layout/navbar';
 import { NextPageWithLayout } from '@/pages/_app';
@@ -76,7 +77,9 @@ const getLayout = (page: ReactElement) => {
   return (
     <Layout>
       <Navbar type={Types.Channels} />
-      <LayoutWrapper>{page}</LayoutWrapper>
+      <Header>
+        <LayoutWrapper>{page}</LayoutWrapper>
+      </Header>
     </Layout>
   );
 };

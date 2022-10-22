@@ -1,8 +1,9 @@
-import DirectMessages from '@/components/DirectMessages';
 import Input from '@/components/input';
 import Layout from '@/components/layout';
+import Header from '@/components/layout/header';
 import LayoutWrapper from '@/components/layout/layoutWrapper';
 import Navbar from '@/components/layout/navbar';
+import Message from '@/components/Message';
 import { NextPageWithLayout } from '@/pages/_app';
 import { trpc } from '@/utils/trpc';
 import { useSession } from 'next-auth/react';
@@ -114,7 +115,7 @@ const Friend: NextPageWithLayout = () => {
         }}
       >
         {dms?.map((dm) => (
-          <DirectMessages key={dm.id} Message={dm} />
+          <Message key={dm.id} Message={dm} />
         ))}
         <div ref={scrollTargetRef}></div>
       </div>
@@ -144,7 +145,9 @@ const getLayout = (page: ReactElement) => {
   return (
     <Layout>
       <Navbar />
-      <LayoutWrapper>{page}</LayoutWrapper>
+      <Header>
+        <LayoutWrapper>{page}</LayoutWrapper>
+      </Header>
     </Layout>
   );
 };

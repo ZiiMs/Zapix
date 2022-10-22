@@ -80,7 +80,9 @@ const Navbar: React.FC<{ type?: Types }> = ({ type = Types.Friends }) => {
                 ? Servers.map((server) => (
                     <Link
                       key={server.id}
-                      href={`/channels/${encodeURIComponent(server.id)}`}
+                      href={`/channels/${encodeURIComponent(server.id)}/${
+                        server.defaultChannelId
+                      }`}
                     >
                       <CustomImage
                         name={server.name}
@@ -90,9 +92,6 @@ const Navbar: React.FC<{ type?: Types }> = ({ type = Types.Friends }) => {
                         className={
                           'rounded-full hover:animate-roundedOn w-[44px] h-[44px] bg-rad-black-500 font-bold text-lg'
                         }
-                        onClick={() => {
-                          setTitle(server.name);
-                        }}
                       />
                     </Link>
                   ))
@@ -132,9 +131,7 @@ const Navbar: React.FC<{ type?: Types }> = ({ type = Types.Friends }) => {
                 src={session?.user?.image ?? undefined}
                 width={32}
                 height={32}
-                className={
-                  'rounded-full bg-rad-black-500 font-bold text-lg'
-                }
+                className={'rounded-full bg-rad-black-500 font-bold text-lg'}
                 onClick={() => {
                   signOut();
                 }}

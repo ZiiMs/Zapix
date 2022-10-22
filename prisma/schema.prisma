@@ -93,19 +93,21 @@ model VerificationToken {
 }
 
 model Server {
-    id        String     @id @default(cuid())
-    name      String
-    image     String?
-    createdAt DateTime   @default(now())
-    updatedAt DateTime   @default(now()) @updatedAt
-    Channels  Channels[]
-    Users     User[]
+    id               String     @id @default(cuid())
+    name             String
+    image            String?
+    createdAt        DateTime   @default(now())
+    updatedAt        DateTime   @default(now()) @updatedAt
+    Channels         Channels[]
+    Users            User[]
+    defaultChannelId String?    @unique
 }
 
 model Channels {
     id        String     @id @default(cuid())
     name      String
     private   Boolean
+    default   Boolean
     Users     User[]
     Messages  Messages[]
     Server    Server     @relation(fields: [serversId], references: [id])
@@ -119,6 +121,6 @@ model Messages {
     userId     String
     Channels   Channels @relation(fields: [channelsId], references: [id], onDelete: Cascade)
     channelsId String
-    createdAt  DateTime @default(now())
-    updatedAt  DateTime @default(now())
+    createdAt  DateTime @unique @default(now())
+    updatedAt  DateTime @updatedAt
 }

@@ -17,6 +17,8 @@ const AddFriendModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
     {
       onSuccess: (data) => {
         client.invalidateQueries(['user.friends.getAll']);
+        client.invalidateQueries(['user.friends.requests.getAll']);
+        client.invalidateQueries(['user.friends.requests.getSent']);
         console.log(data);
         setFriendName('');
         onClose();

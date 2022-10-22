@@ -1,4 +1,3 @@
-import { TRPCClientError } from '@trpc/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 import { createProtectedRouter } from './context';
@@ -92,7 +91,7 @@ export const UserRouter = createProtectedRouter()
       username: z.string(),
     }),
     async resolve({ ctx, input }) {
-      const foundFriend = await ctx.prisma.friend.count({
+      const FriendsFoundPromise = ctx.prisma.friend.count({
         where: {
           OR: [
             {
@@ -111,12 +110,59 @@ export const UserRouter = createProtectedRouter()
         },
       });
 
+      const FriendRequestPromise = ctx.prisma.user.count({
+        where: {
+          username: input.username,
+          SentFriendRequets: {
+            some: {
+              id: ctx.session.user.id,
+            },
+          },
+        },
+      });
+
+      const [hasFrinedRequest, foundFriend] = await Promise.all([
+        FriendRequestPromise,
+        FriendsFoundPromise,
+      ]);
+
+      console.log('Woij', hasFrinedRequest, foundFriend);
       if (foundFriend > 0) {
         throw new TRPCError({
           code: 'CONFLICT',
           cause: 'Unique constraint failed',
           message: 'That person is already your friend.',
         });
+      }
+
+      if (hasFrinedRequest > 0) {
+        const newUser = await ctx.prisma.user
+          .update({
+            where: {
+              username: input.username,
+            },
+            data: {
+              SentFriendRequets: {
+                disconnect: {
+                  id: ctx.session.user.id,
+                },
+              },
+              Friend: {
+                create: {
+                  friendId: ctx.session.user.id,
+                },
+              },
+            },
+          })
+          .catch((err) => {
+            throw new TRPCError({
+              code: 'CONFLICT',
+              cause: err,
+              message: 'That person is already your friend.',
+            });
+          });
+
+        return newUser;
       }
 
       const newUser = await ctx.prisma.user
@@ -151,6 +197,20 @@ export const UserRouter = createProtectedRouter()
         },
         select: {
           FriendRequests: true,
+        },
+      });
+
+      return friendRequests;
+    },
+  })
+  .query('friends.requests.getSent', {
+    async resolve({ ctx }) {
+      const friendRequests = await ctx.prisma.user.findUnique({
+        where: {
+          id: ctx.session.user.id,
+        },
+        select: {
+          SentFriendRequets: true,
         },
       });
 
