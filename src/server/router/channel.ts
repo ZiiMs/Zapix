@@ -1,9 +1,40 @@
+import { Messages, User } from '@prisma/client';
+import * as trpc from '@trpc/server';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { createRouter } from './context';
+import { ee } from '../events';
+import { createProtectedRouter } from './context';
 
 // Example router with queries that can only be hit if the user requesting is signed in
-export const channelRouter = createRouter()
+export const channelRouter = createProtectedRouter()
+  .subscription('onAdd', {
+    input: z.object({
+      channelId: z.string(),
+    }),
+    resolve({ ctx, input }) {
+      return new trpc.Subscription<
+        Messages & {
+          User: User;
+        }
+      >((emit) => {
+        const onAdd = (
+          data: Messages & {
+            User: User;
+          }
+        ) => {
+          if (input.channelId === data.channelsId) {
+            emit.data(data);
+          }
+        };
+
+        ee.on('addMessage', onAdd);
+
+        return () => {
+          ee.off('addMessage', onAdd);
+        };
+      });
+    },
+  })
   .query('get', {
     input: z.object({
       id: z.string(),
@@ -56,6 +87,26 @@ export const channelRouter = createRouter()
       }
 
       return { items, nextCursor };
+    },
+  })
+  .mutation('create', {
+    input: z.object({
+      body: z.string(),
+      channelId: z.string(),
+    }),
+    async resolve({ ctx, input }) {
+      const newMessage = await ctx.prisma.messages.create({
+        data: {
+          body: input.body,
+          channelsId: input.channelId,
+          userId: ctx.session.user.id,
+        },
+        include: {
+          User: true,
+        },
+      });
+      ee.emit('addMessage', { ...newMessage });
+      return newMessage;
     },
   });
 

@@ -1,10 +1,8 @@
 import { DirectMessages, User } from '@prisma/client';
 import * as trpc from '@trpc/server';
-import { EventEmitter } from 'events';
 import { z } from 'zod';
+import { ee } from '../events';
 import { createProtectedRouter } from './context';
-
-const ee = new EventEmitter();
 
 // Example router with queries that can only be hit if the user requesting is signed in
 export const MessagesRouter = createProtectedRouter()
@@ -29,10 +27,10 @@ export const MessagesRouter = createProtectedRouter()
           }
         };
 
-        ee.on('create', onAdd);
+        ee.on('addDm', onAdd);
 
         return () => {
-          ee.off('create', onAdd);
+          ee.off('addDm', onAdd);
         };
       });
     },
@@ -94,7 +92,7 @@ export const MessagesRouter = createProtectedRouter()
           Sender: true,
         },
       });
-      ee.emit('create', { dm: newMessage, channelId: input.channelId });
+      ee.emit('addDm', { dm: newMessage, channelId: input.channelId });
       return newMessage;
     },
   })

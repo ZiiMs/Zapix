@@ -13,6 +13,7 @@ import shallow from 'zustand/shallow';
 
 const Channel: NextPageWithLayout = () => {
   const router = useRouter();
+  const [input, setInput] = useState('');
   const { server, channel } = router.query;
   const { data: Channel } = trpc.useQuery(
     ['channel.get', { id: channel as string }],
@@ -23,6 +24,13 @@ const Channel: NextPageWithLayout = () => {
       },
     }
   );
+
+  const { mutate } = trpc.useMutation(['channel.create'], {
+    onSuccess: (data) => {
+      setInput('');
+      console.log('Mutate success');
+    },
+  });
 
   const postQuery = trpc.useInfiniteQuery(
     ['channel.messages.getInfinite', { limit: 20, id: channel as string }],
@@ -79,10 +87,17 @@ const Channel: NextPageWithLayout = () => {
     }
   }, [postQuery.data?.pages, addDMS]);
 
+  trpc.useSubscription(['channel.onAdd', { channelId: channel as string }], {
+    onNext: (data) => {
+      addDMS([data]);
+      console.log('FoundData', data);
+    },
+  });
+
   return (
     <div className='flex w-full h-full flex-col items-start justify-end '>
       <div
-        className='pl-2 overflow-y-auto gap-2 flex flex-col w-full scrollbar-thin scrollbar-thumb-rounded scrollbar-track-rounded scrollbar-track-rad-black-200 scrollbar-thumb-rad-black-900'
+        className='overflow-y-auto gap-2 flex flex-col w-full scrollbar-thin scrollbar-thumb-rounded scrollbar-track-rounded scrollbar-track-rad-black-200 scrollbar-thumb-rad-black-900'
         onScroll={(e) => {
           const bottom = e.currentTarget.scrollTop <= 200;
 
@@ -109,19 +124,16 @@ const Channel: NextPageWithLayout = () => {
         <div className='flex flex-row p-2 bg-rad-black-300 w-full rounded'>
           <Input
             className='bg-transparent p-1 w-full outline-none'
+            onChange={(e) => {
+              setInput(e.currentTarget.value);
+            }}
+            value={input}
             onSubmit={() => {
-              console.log('Submited');
-            }} // onChange={(e) => {
-            //   setMessage(e.currentTarget.value);
-            // }}
-            // value={message}
-            // onSubmit={() => {
-            //   mutate({
-            //     reciever: friend as string,
-            //     text: message,
-            //     channelId: channelId,
-            //   });
-            // }}
+              mutate({
+                body: input,
+                channelId: channel as string,
+              });
+            }}
           />
         </div>
       </div>
