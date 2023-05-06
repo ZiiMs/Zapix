@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch ./wsServer.ts --tsconfig tsconfig.json",
+    "install": "pnpm --filter !nextjs install --store=node_modules/.pnpm-store",
     "build": "esbuild index=./src --bundle --minify --outdir=dist --packages=external --platform=node",
     "start": "node dist",
     "with-env": "dotenv -e ../../.env --"
