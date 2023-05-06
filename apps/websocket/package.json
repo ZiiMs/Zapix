@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch ./wsServer.ts --tsconfig tsconfig.json",
     "install": "",
-    "build": "esbuild index=./src --bundle --minify --outdir=dist --packages=external --platform=node",
+    "build": "esbuild index=wsServer.ts --bundle --minify --outdir=dist --packages=external --platform=node",
     "start": "node dist",
     "with-env": "dotenv -e ../../.env --"
   },
