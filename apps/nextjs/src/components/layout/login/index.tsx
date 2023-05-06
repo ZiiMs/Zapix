@@ -1,0 +1,36 @@
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
+import React, { type PropsWithChildren, type ReactNode } from 'react';
+
+const LoginLayout: React.FC<{ children: PropsWithChildren<ReactNode> }> = ({
+  children,
+}) => {
+  const router = useRouter();
+  const { status, data } = useSession({
+    required: true,
+    onUnauthenticated: () => {
+      return;
+    },
+  });
+
+  if (status === 'authenticated') {
+    if (!data.user?.isRegistered) {
+      if (router.asPath !== '/register') {
+        void router.push('/register');
+        console.log(router.asPath);
+      }
+    } else {
+      void router.push('/');
+    }
+  }
+  return (
+    <div className='flex flex-row'>
+      <main className='container mx-auto flex flex-col items-center justify-center min-h-screen p-4'>
+        {children}
+      </main>
+    </div>
+  );
+};
+
+export default LoginLayout;
+

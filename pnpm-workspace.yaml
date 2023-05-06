@@ -1,0 +1,8 @@
+packages:
+  - apps/nextjs
+  - apps/websocket
+  - packages/api
+  - packages/redis
+  - packages/auth
+  - packages/db
+  - packages/config/*

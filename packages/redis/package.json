@@ -1,0 +1,26 @@
+{
+  "name": "@acme/redis",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "files": [
+    "redis.ts",
+    "tsconfig.json"
+  ],
+  "scripts": {
+    "clean": "rm -rf .turbo node_modules",
+    "lint": "eslint .",
+    "lint:fix": "pnpm lint --fix",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ioredis": "^5.3.2",
+    "typescript": "^5.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^18.16.3"
+  }
+}
