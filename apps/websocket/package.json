@@ -28,7 +28,7 @@
     "tsx": "^3.12.7"
   },
   "engines": {
-    "node": ">=18.11",
+    "node": ">=18.16",
     "pnpm": ">=7.27"
   },
   "packageManager": "pnpm@7.7.0"
