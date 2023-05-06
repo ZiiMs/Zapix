@@ -1,4 +1,13 @@
 {
-  "extends": "../../tsconfig.json",
-  "include": ["index.ts"]
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "moduleResolution": "node",
+    "preserveWatchOutput": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "strict": true
+  },
+  "exclude": ["node_modules"]
 }

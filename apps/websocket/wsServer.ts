@@ -1,11 +1,9 @@
-import http from "http";
 import { WebSocketServer } from "ws";
 
-import { getServerSession, type Session } from "@acme/auth";
 import { type Messages, type User } from "@acme/db";
 import { redisClient } from "@acme/redis";
 
-const port = parseInt(process.env.WS_PORT) || 3001;
+const port = process.env.WS_PORT || "3001";
 
 // const server = http.createServer(async (req, res) => {
 //   const proto = req.headers["x-forward-proto"];
@@ -17,13 +15,12 @@ const port = parseInt(process.env.WS_PORT) || 3001;
 //     return;
 //   }
 // });
-const wss = new WebSocketServer({ port: port });
+const wss = new WebSocketServer({ port: parseInt(port) });
 
 void redisClient.subscribe("addMessage");
 
 wss.on("connection", (ws) => {
-  // eslint-disable-next-line @typescript-eslint/no-misused-promises
-  redisClient.on("message", async (chan, jsonData) => {
+  redisClient.on("message", (chan: any, jsonData: string) => {
     switch (chan) {
       case "addMessage": {
         console.log("AddMessage");
@@ -46,12 +43,6 @@ wss.on("connection", (ws) => {
     console.log(`➖➖ Connection (${wss.clients.size})`);
   });
 });
-
-// const handler = applyWSSHandler({
-//   wss,
-//   router: appRouter,
-//   createContext: createContextWSS,
-// });
 
 process.on("SIGTERM", () => {
   console.log("SIGTERM");

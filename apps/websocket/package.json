@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch ./wsServer.ts --tsconfig tsconfig.json",
-    "install": "",
-    "build": "esbuild index=wsServer.ts --bundle --minify --outdir=dist --packages=external --platform=node",
-    "start": "node dist",
+    "build": "tsc --project tsconfig.json ",
+    "start": "pnpm with-env node dist/wsServer.js",
     "with-env": "dotenv -e ../../.env --"
   },
   "keywords": [],
@@ -25,11 +25,11 @@
     "ws": "^8.13.0"
   },
   "devDependencies": {
+    "@types/ws": "^8.5.4",
     "tsx": "^3.12.7"
   },
   "engines": {
     "node": ">=18.16",
     "pnpm": ">=7.27"
-  },
-  "packageManager": "pnpm@7.7.0"
+  }
 }

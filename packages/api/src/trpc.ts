@@ -7,12 +7,9 @@
  * The pieces you will need to use are documented accordingly near the end
  */
 
-import { type IncomingMessage } from "http";
 import { TRPCError, initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { type NodeHTTPCreateContextFnOptions } from "@trpc/server/dist/adapters/node-http";
 import superjson from "superjson";
-import type ws from "ws";
 import { ZodError } from "zod";
 
 import { getServerSession, type Session } from "@acme/auth";

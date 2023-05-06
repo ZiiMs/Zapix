@@ -4,7 +4,7 @@ import { type AppRouter } from "./src/root";
 
 export { applyWSSHandler } from "@trpc/server/adapters/ws";
 export { appRouter, type AppRouter } from "./src/root";
-export { createContextWSS, createTRPCContext } from "./src/trpc";
+export { createTRPCContext } from "./src/trpc";
 
 /**
  * Inference helpers for input types
