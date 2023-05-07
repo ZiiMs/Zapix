@@ -1,26 +1,54 @@
 import { WebSocketServer } from "ws";
 
-import { type Messages, type User } from "@acme/db";
+import { type DirectMessages, type Messages, type User } from "@acme/db";
 import { redisClient } from "@acme/redis";
 
 import { heartbeat, keepAlive } from "./utils/keepalive.js";
 import { type Socket } from "./utils/state.js";
 
-const wss = new WebSocketServer({ port: Number(process.env.PORT) });
+const wss = new WebSocketServer({
+  port: Number(process.env.NEXT_PUBLIC_WS_PORT),
+});
 
 void redisClient.subscribe("addMessage");
+void redisClient.subscribe("addDm");
 
 wss.on("connection", (ws: Socket) => {
-  redisClient.on("message", (chan: any, jsonData: string) => {
+  redisClient.on("message", (chan: string, jsonData: string) => {
     switch (chan) {
       case "addMessage": {
         console.log("AddMessage");
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const data: Messages & { User: User } = JSON.parse(jsonData);
         const msg: { channel: string; data: Messages & { User: User } } = {
           channel: chan,
           data: data,
         };
         ws.send(JSON.stringify(msg));
+        break;
+      }
+      case "addDm": {
+        console.log("addDm");
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const data: {
+          dm: DirectMessages & {
+            Sender: User;
+          };
+          channelId: string;
+        } = JSON.parse(jsonData);
+        const dm: {
+          channel: string;
+          data: {
+            dm: DirectMessages & {
+              Sender: User;
+            };
+            channelId: string;
+          };
+        } = {
+          channel: chan,
+          data: data,
+        };
+        ws.send(JSON.stringify(dm));
         break;
       }
       default: {

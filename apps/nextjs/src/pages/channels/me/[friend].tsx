@@ -1,5 +1,3 @@
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/router";
 import {
   useCallback,
   useEffect,
@@ -7,19 +5,29 @@ import {
   useState,
   type ReactElement,
 } from "react";
+import { useRouter } from "next/router";
+import { type User } from "next-auth";
+import { useSession } from "next-auth/react";
+import { string } from "zod";
+
+import channel from "@acme/api/src/router/channel";
+import { type DirectMessages, type Messages } from "@acme/db";
+
+import { api } from "~/utils/api";
 import Message from "~/components/Message";
 import Input from "~/components/input";
 import Layout from "~/components/layout";
 import Header from "~/components/layout/header";
 import LayoutWrapper from "~/components/layout/layoutWrapper";
 import Navbar from "~/components/layout/navbar";
+import { env } from "~/env.mjs";
 import { type NextPageWithLayout } from "~/pages/_app";
-import { api } from "~/utils/api";
 
 const Friend: NextPageWithLayout = () => {
   const router = useRouter();
   const { friend } = router.query;
   const [message, setMessage] = useState("");
+  const wss = useRef<WebSocket | null>(null);
   const { data: session, status } = useSession();
   const scrollTargetRef = useRef<HTMLDivElement>(null);
   const channelId = friend as string;
@@ -37,7 +45,7 @@ const Friend: NextPageWithLayout = () => {
     { limit: 20, friendId: channelId },
     {
       getPreviousPageParam: (d) => d.nextCursor,
-    }
+    },
   );
 
   const { hasPreviousPage, fetchPreviousPage, isFetchingPreviousPage } =
@@ -60,9 +68,16 @@ const Friend: NextPageWithLayout = () => {
         map[msg.id] = msg;
       }
 
-      return Object.values(map).sort(
-        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
-      );
+      return Object.values(map).sort((a, b) => {
+        if (typeof a.createdAt === "string") {
+          a.createdAt = new Date(a.createdAt);
+        }
+        if (typeof b.createdAt === "string") {
+          b.createdAt = new Date(b.createdAt);
+        }
+
+        return a.createdAt.getTime() - b.createdAt.getTime();
+      });
     });
     scrollToBottomOfList("auto");
   }, []);
@@ -96,20 +111,60 @@ const Friend: NextPageWithLayout = () => {
         block: "end",
       });
     },
-    [scrollTargetRef]
+    [scrollTargetRef],
   );
+
+  useEffect(() => {
+    wss.current = new WebSocket(env.NEXT_PUBLIC_WS_HOST);
+    wss.current.onopen = () => console.log("WS Opened");
+    wss.current.onclose = () => console.log("WS Closed");
+
+    const wsCurrent = wss.current;
+
+    return () => {
+      wsCurrent.close();
+    };
+  }, [wss]);
+
+  type adDm = {
+    channel: string;
+    data: {
+      dm: DirectMessages & {
+        Sender: User;
+      };
+      channelId: string;
+    };
+  };
+
+  useEffect(() => {
+    if (!wss.current) return;
+
+    wss.current.onmessage = (e) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const message: adDm = JSON.parse(e.data);
+      console.log("E!", message);
+      if (message.channel === "addDm") {
+        const data = message.data;
+        if (data.channelId === channelId) {
+          console.log("FoundData", data);
+
+          addDMS([data.dm]);
+        }
+      }
+    };
+  }, []);
 
   if (!session || !session.user) return <div>Session ont found!</div>;
 
-  api.dms.onAdd.useSubscription(
-    { channelId: channelId },
-    {
-      onData: (data) => {
-        addDMS([data]);
-        console.log("FoundData", data);
-      },
-    }
-  );
+  // api.dms.onAdd.useSubscription(
+  //   { channelId: channelId },
+  //   {
+  //     onData: (data) => {
+  //       addDMS([data]);
+  //       console.log("FoundData", data);
+  //     },
+  //   },
+  // );
 
   return (
     <div className="flex h-full w-full flex-col items-start justify-end ">

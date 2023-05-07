@@ -93,7 +93,6 @@ export default createTRPCRouter({
         },
       });
       console.log("Adderwer");
-      const ses = ctx.session;
       void redisClient.publish(
         "addMessage",
         JSON.stringify({ message: newMessage }),

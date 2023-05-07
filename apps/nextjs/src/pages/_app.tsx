@@ -1,4 +1,4 @@
-import { useEffect, type ReactElement, type ReactNode } from "react";
+import { type ReactElement, type ReactNode } from "react";
 import { type NextPage } from "next";
 import type { AppProps, AppType } from "next/app";
 import type { Session } from "next-auth";

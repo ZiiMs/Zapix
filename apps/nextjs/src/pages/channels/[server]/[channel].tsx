@@ -96,7 +96,7 @@ const Channel: NextPageWithLayout = () => {
   }, []);
 
   useEffect(() => {
-    wss.current = new WebSocket(`wss://${env.NEXT_PUBLIC_WS_HOST}`);
+    wss.current = new WebSocket(env.NEXT_PUBLIC_WS_HOST);
     wss.current.onopen = () => console.log("WS Opened");
     wss.current.onclose = () => console.log("WS Closed");
 

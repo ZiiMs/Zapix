@@ -3,40 +3,42 @@ import { TRPCError } from "@trpc/server";
 import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
+import { redisClient } from "@acme/redis";
+
 import { ee } from "../events";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const MessageRouter = createTRPCRouter({
-  onAdd: protectedProcedure
-    .input(
-      z.object({
-        channelId: z.string(),
-      }),
-    )
-    .subscription(({ input }) => {
-      return observable<
-        DirectMessages & {
-          Sender: User;
-        }
-      >((emit) => {
-        const onAdd = (data: {
-          dm: DirectMessages & {
-            Sender: User;
-          };
-          channelId: string;
-        }) => {
-          if (input.channelId === data.channelId) {
-            emit.next(data.dm);
-          }
-        };
+  // onAdd: protectedProcedure
+  //   .input(
+  //     z.object({
+  //       channelId: z.string(),
+  //     }),
+  //   )
+  //   .subscription(({ input }) => {
+  //     return observable<
+  //       DirectMessages & {
+  //         Sender: User;
+  //       }
+  //     >((emit) => {
+  //       const onAdd = (data: {
+  //         dm: DirectMessages & {
+  //           Sender: User;
+  //         };
+  //         channelId: string;
+  //       }) => {
+  //         if (input.channelId === data.channelId) {
+  //           emit.next(data.dm);
+  //         }
+  //       };
 
-        ee.on("addDm", onAdd);
+  //       ee.on("addDm", onAdd);
 
-        return () => {
-          ee.off("addDm", onAdd);
-        };
-      });
-    }),
+  //       return () => {
+  //         ee.off("addDm", onAdd);
+  //       };
+  //     });
+  //   }),
   infiniteDms: protectedProcedure
     .input(
       z.object({
@@ -100,7 +102,11 @@ export const MessageRouter = createTRPCRouter({
           Sender: true,
         },
       });
-      ee.emit("addDm", { dm: newMessage, channelId: input.channelId });
+      console.log("Sending");
+      void redisClient.publish(
+        "addDm",
+        JSON.stringify({ dm: newMessage, channelId: input.channelId }),
+      );
       return newMessage;
     }),
   delete: protectedProcedure
