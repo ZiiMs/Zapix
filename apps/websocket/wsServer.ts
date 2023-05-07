@@ -54,4 +54,4 @@ process.on("SIGTERM", () => {
 });
 // server.listen(port);
 
-console.log(`✅ WebSocket Server listening on ${wss.address().toString()}`);
+console.log(`✅ WebSocket Server listening on ${wss.path}`);
