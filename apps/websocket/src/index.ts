@@ -3,25 +3,14 @@ import { WebSocketServer } from "ws";
 import { type Messages, type User } from "@acme/db";
 import { redisClient } from "@acme/redis";
 
-const port = process.env.WS_PORT || "3001";
+import { heartbeat, keepAlive } from "./utils/keepalive.js";
+import { type Socket } from "./utils/state.js";
 
-// const server = http.createServer(async (req, res) => {
-//   const proto = req.headers["x-forward-proto"];
-//   if (proto && proto === "http") {
-//     res.writeHead(303, {
-//       location: `https://${req.headers.host}${req.headers.url ?? ""}`,
-//     });
-//     res.end();
-//     return;
-//   }
-// });
-const wss = new WebSocketServer({
-  port: Number(port),
-});
+const wss = new WebSocketServer({ port: Number(process.env.PORT) });
 
 void redisClient.subscribe("addMessage");
 
-wss.on("connection", (ws) => {
+wss.on("connection", (ws: Socket) => {
   redisClient.on("message", (chan: any, jsonData: string) => {
     switch (chan) {
       case "addMessage": {
@@ -44,13 +33,9 @@ wss.on("connection", (ws) => {
   ws.once("close", () => {
     console.log(`➖➖ Connection (${wss.clients.size})`);
   });
+
+  ws.on("pong", heartbeat);
 });
 
-process.on("SIGTERM", () => {
-  console.log("SIGTERM");
-  // handler.broadcastReconnectNotification();
-  wss.close();
-});
-// server.listen(port);
-
-console.log(`✅ WebSocket Server listening on ${wss.path}`);
+const interval = keepAlive(wss);
+wss.on("close", () => clearInterval(interval));

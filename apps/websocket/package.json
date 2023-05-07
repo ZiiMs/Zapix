@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "tsx watch ./wsServer.ts --tsconfig tsconfig.json",
-    "build": "esbuild index=wsServer.ts --bundle --minify --outfile=index.js --platform=node --loader:.ts=ts",
-    "start": "node index.js",
+    "build": "esbuild index=./src --bundle --minify --outdir=dist --platform=node --loader:.ts=ts",
+    "start": "node dist",
     "with-env": "dotenv -e ../../.env --"
   },
   "keywords": [],
