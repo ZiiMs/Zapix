@@ -15,7 +15,10 @@ const port = process.env.WS_PORT || "3001";
 //     return;
 //   }
 // });
-const wss = new WebSocketServer({ port: parseInt(port) });
+const wss = new WebSocketServer({
+  host: process.env.WS_HOST,
+  port: parseInt(port),
+});
 
 void redisClient.subscribe("addMessage");
 
@@ -51,4 +54,4 @@ process.on("SIGTERM", () => {
 });
 // server.listen(port);
 
-console.log("✅ WebSocket Server listening on ws://localhost:3001");
+console.log(`✅ WebSocket Server listening on ${wss.address().toString()}`);
