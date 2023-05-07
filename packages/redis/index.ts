@@ -1,15 +1,8 @@
-import Redis, { type RedisOptions } from "ioredis";
-
-const options: RedisOptions = {
-  host: process.env.REDIS_HOST,
-  port: parseInt(process.env.REDIS_PORT ?? "6379"),
-  lazyConnect: true,
-  password: process.env.REDIS_PASSWORD,
-};
+import Redis from "ioredis";
 
 export const createRedisClient = () => {
   try {
-    const redis = new Redis(options);
+    const redis = new Redis(process.env.REDIS_URL);
 
     redis.on("connect", (data: unknown) => {
       console.log("[REDIS] Connected.", data);
