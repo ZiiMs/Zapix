@@ -45,7 +45,7 @@
     "NEXTAUTH_URL",
     "REDIS_URL",
     "NEXT_PUBLIC_WS_HOST",
-    "NEXT_PUBLIC_WS_PORT",
+    "PORT",
     "NODE_ENV",
     "SKIP_ENV_VALIDATION",
     "VERCEL",

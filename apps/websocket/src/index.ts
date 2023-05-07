@@ -7,7 +7,7 @@ import { heartbeat, keepAlive } from "./utils/keepalive.js";
 import { type Socket } from "./utils/state.js";
 
 const wss = new WebSocketServer({
-  port: Number(process.env.NEXT_PUBLIC_WS_PORT),
+  port: Number(process.env.PORT),
 });
 
 void redisClient.subscribe("addMessage");
