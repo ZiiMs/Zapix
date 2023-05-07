@@ -6,12 +6,11 @@ import {
   type ReactElement,
 } from "react";
 import { useRouter } from "next/router";
-import { type User } from "next-auth";
 import { useSession } from "next-auth/react";
 import { string } from "zod";
 
 import channel from "@acme/api/src/router/channel";
-import { type DirectMessages, type Messages } from "@acme/db";
+import { type DirectMessages, type Messages, type User } from "@acme/db";
 
 import { api } from "~/utils/api";
 import Message from "~/components/Message";
