@@ -34,6 +34,8 @@ export const env = createEnv({
    */
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_WS_HOST: z.string(),
+    NEXT_PUBLIC_WS_PORT: z.string(),
   },
   /**
    * Destructure all variables from `process.env` to make sure they aren't tree-shaken away.
@@ -49,6 +51,8 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
+    NEXT_PUBLIC_WS_HOST: process.env.NEXT_PUBLIC_WS_HOST,
+    NEXT_PUBLIC_WS_PORT: process.env.NEXT_PUBLIC_WS_PORT,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
 });

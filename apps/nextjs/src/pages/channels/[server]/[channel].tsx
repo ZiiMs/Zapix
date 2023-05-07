@@ -21,6 +21,7 @@ import Layout from "~/components/layout";
 import Header from "~/components/layout/header";
 import LayoutWrapper from "~/components/layout/layoutWrapper";
 import Navbar, { Types } from "~/components/layout/navbar";
+import { env } from "~/env.mjs";
 import { type NextPageWithLayout } from "~/pages/_app";
 
 const Channel: NextPageWithLayout = () => {
@@ -96,7 +97,7 @@ const Channel: NextPageWithLayout = () => {
 
   useEffect(() => {
     wss.current = new WebSocket(
-      `ws://${process.env.WS_HOST}:${process.env.WS_PORT}`,
+      `ws://${env.NEXT_PUBLIC_WS_HOST}:${env.NEXT_PUBLIC_WS_PORT}`,
     );
     wss.current.onopen = () => console.log("WS Opened");
     wss.current.onclose = () => console.log("WS Closed");
