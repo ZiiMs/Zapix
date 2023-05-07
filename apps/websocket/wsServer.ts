@@ -16,8 +16,7 @@ const port = process.env.WS_PORT || "3001";
 //   }
 // });
 const wss = new WebSocketServer({
-  host: process.env.WS_HOST,
-  port: parseInt(port),
+  port: Number(port),
 });
 
 void redisClient.subscribe("addMessage");
