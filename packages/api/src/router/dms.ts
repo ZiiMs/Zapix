@@ -1,11 +1,8 @@
-import { type DirectMessages, type User } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
-import { observable } from "@trpc/server/observable";
 import { z } from "zod";
 
-import { redisClient } from "@acme/redis";
+import { Publisher } from "@acme/redis";
 
-import { ee } from "../events";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
 export const MessageRouter = createTRPCRouter({
@@ -103,7 +100,7 @@ export const MessageRouter = createTRPCRouter({
         },
       });
       console.log("Sending");
-      void redisClient.publish(
+      void Publisher.publish(
         "addDm",
         JSON.stringify({ dm: newMessage, channelId: input.channelId }),
       );

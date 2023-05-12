@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { redisClient } from "@acme/redis";
+import { Publisher } from "@acme/redis";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
@@ -93,7 +93,7 @@ export default createTRPCRouter({
         },
       });
       console.log("Adderwer");
-      void redisClient.publish(
+      void Publisher.publish(
         "addMessage",
         JSON.stringify({ message: newMessage }),
       );

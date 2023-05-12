@@ -1,16 +1,14 @@
-import classNames from "classnames";
+import { useState, type ReactElement } from "react";
 import Link from "next/link";
-import React, { useState, type ReactElement } from "react";
+import classNames from "classnames";
 import useTitleStore from "src/stores/titleStore";
-import { set } from "zod";
-import { shallow } from "zustand/shallow";
+
+import { api } from "~/utils/api";
 import CustomImage from "~/components/CustomImage";
 import Layout from "~/components/layout";
-import Header from "~/components/layout/header";
 import LayoutWrapper from "~/components/layout/layoutWrapper";
 import Navbar from "~/components/layout/navbar";
 import { type NextPageWithLayout } from "~/pages/_app";
-import { api } from "~/utils/api";
 
 enum CategoryFilter {
   All,
@@ -45,10 +43,7 @@ const Me: NextPageWithLayout = () => {
         console.log("Declined Friend", data);
       },
     });
-  const { setTitle } = useTitleStore(
-    (state) => ({ setTitle: state.setTitle }),
-    shallow
-  );
+  const setTitle = useTitleStore.use.setTitle();
 
   const disabled = AcceptingStatus === "loading" || DeclineStatus === "loading";
 
@@ -249,7 +244,7 @@ const Me: NextPageWithLayout = () => {
             "rounded px-2 hover:bg-rad-black-700",
             selected === CategoryFilter.All
               ? "bg-rad-black-800"
-              : "bg-transparent"
+              : "bg-transparent",
           )}
           onClick={(e) => {
             e.preventDefault();
@@ -263,7 +258,7 @@ const Me: NextPageWithLayout = () => {
             "relative rounded px-2 hover:bg-rad-black-700",
             selected === CategoryFilter.Pending
               ? "bg-rad-black-800"
-              : "bg-transparent"
+              : "bg-transparent",
           )}
           onClick={(e) => {
             e.preventDefault();
@@ -280,7 +275,7 @@ const Me: NextPageWithLayout = () => {
             "rounded px-2 hover:bg-rad-black-700",
             selected === CategoryFilter.Sent
               ? "bg-rad-black-800"
-              : "bg-transparent"
+              : "bg-transparent",
           )}
           onClick={(e) => {
             e.preventDefault();

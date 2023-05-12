@@ -1,10 +1,9 @@
-import classNames from "classnames";
-import { signOut, useSession } from "next-auth/react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import { signOut, useSession } from "next-auth/react";
 import useTitleStore from "src/stores/titleStore";
-import { shallow } from "zustand/shallow";
+
 import { api } from "~/utils/api";
 import CustomImage from "../CustomImage";
 import CreateServerModal from "../modal/CreateServer";
@@ -23,10 +22,7 @@ const Navbar: React.FC<{ type?: Types }> = ({ type = Types.Friends }) => {
   const { data: Servers } = api.server.getAll.useQuery();
 
   const { data: session } = useSession({ required: true });
-  const { setTitle } = useTitleStore(
-    (state) => ({ setTitle: state.setTitle }),
-    shallow
-  );
+  const setTitle = useTitleStore.use.setTitle();
 
   const DmButton = () => {
     if (router.asPath.toLowerCase().includes("/channels/me")) {
@@ -81,7 +77,7 @@ const Navbar: React.FC<{ type?: Types }> = ({ type = Types.Friends }) => {
                     <Link
                       key={server.id}
                       href={`/channels/${encodeURIComponent(server.id)}/${
-                        server.defaultChannelId ?? ''
+                        server.defaultChannelId ?? ""
                       }`}
                     >
                       <CustomImage

@@ -1,6 +1,7 @@
 import { httpBatchLink } from "@trpc/client";
 import { createTRPCNext } from "@trpc/next";
 import superjson from "superjson";
+import { type StoreApi, type UseBoundStore } from "zustand";
 
 import { type AppRouter } from "@acme/api";
 
@@ -9,6 +10,22 @@ const getBaseUrl = () => {
   if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`; // SSR should use vercel url
 
   return `http://localhost:3000`; // dev SSR should use localhost
+};
+
+type WithSelectors<S> = S extends { getState: () => infer T }
+  ? S & { use: { [K in keyof T]: () => T[K] } }
+  : never;
+
+export const createSelectors = <S extends UseBoundStore<StoreApi<object>>>(
+  _store: S,
+) => {
+  const store = _store as WithSelectors<typeof _store>;
+  store.use = {};
+  for (const k of Object.keys(store.getState())) {
+    (store.use as any)[k] = () => store((s) => s[k as keyof typeof s]);
+  }
+
+  return store;
 };
 
 // const getBaseUrl = (websocket = false) => {

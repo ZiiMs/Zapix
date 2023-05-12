@@ -57,7 +57,6 @@ const Friend: NextPageWithLayout = () => {
   type DM = NonNullable<typeof dms>[number];
 
   const addDMS = useCallback((incoming: DM[]) => {
-    console.log("weopirj");
     setDms((curr) => {
       const map: Record<DM["id"], DM> = {};
       for (const msg of curr ?? []) {
@@ -197,11 +196,13 @@ const Friend: NextPageWithLayout = () => {
             }}
             value={message}
             onSubmit={() => {
-              mutate({
-                reciever: friend as string,
-                text: message,
-                channelId: channelId,
-              });
+              if (message.trim().length !== 0) {
+                mutate({
+                  reciever: friend as string,
+                  text: message,
+                  channelId: channelId,
+                });
+              }
             }}
           />
         </div>

@@ -10,7 +10,6 @@ import {
 } from "react";
 import { useRouter } from "next/router";
 import useTitleStore from "src/stores/titleStore";
-import { shallow } from "zustand/shallow";
 
 import { type Messages, type User } from "@acme/db";
 
@@ -29,6 +28,8 @@ const Channel: NextPageWithLayout = () => {
   const [input, setInput] = useState("");
   const wss = useRef<WebSocket | null>(null);
   const { server, channel } = router.query;
+  const scrollTargetRef = useRef<HTMLDivElement>(null);
+
   const { data: Channel } = api.channel.get.useQuery(
     { id: channel as string },
     {
@@ -43,6 +44,7 @@ const Channel: NextPageWithLayout = () => {
     onSuccess: () => {
       setInput("");
       console.log("Mutate success");
+      scrollToBottomOfList("auto");
     },
   });
 
@@ -56,14 +58,12 @@ const Channel: NextPageWithLayout = () => {
   const { hasPreviousPage, fetchPreviousPage, isFetchingPreviousPage } =
     postQuery;
 
-  const { setTitle } = useTitleStore(
-    (state) => ({ setTitle: state.setTitle }),
-    shallow,
-  );
+  const setTitle = useTitleStore.use.setTitle();
+  const title = useTitleStore.use.title();
 
-  useMemo(() => {
-    setTitle(Channel?.name ?? "");
-  }, []);
+  // useMemo(() => {
+  //   setTitle(Channel?.name ?? "");
+  // }, [Channel]);
 
   const [msgs, setMsgs] = useState(() => {
     const post = postQuery.data?.pages.map((page) => page.items).flat();
@@ -71,8 +71,22 @@ const Channel: NextPageWithLayout = () => {
   });
   type MSG = NonNullable<typeof msgs>[number];
 
+  const scrollToBottomOfList = useCallback(
+    (behavior: ScrollBehavior) => {
+      if (scrollTargetRef.current == null) {
+        console.log("NoRef");
+        return;
+      }
+
+      scrollTargetRef.current.scrollIntoView({
+        behavior: behavior,
+        block: "end",
+      });
+    },
+    [scrollTargetRef],
+  );
+
   const addDMS = useCallback((incoming: MSG[]) => {
-    console.log("weopirj", incoming);
     setMsgs((curr) => {
       const map: Record<MSG["id"], MSG> = {};
       for (const msg of curr ?? []) {
@@ -127,10 +141,10 @@ const Channel: NextPageWithLayout = () => {
 
   useEffect(() => {
     const msgs = postQuery.data?.pages.map((page) => page.items).flat();
-    console.log(msgs);
     if (msgs !== undefined) {
       setMsgs([]);
       addDMS(msgs);
+      scrollToBottomOfList("auto");
     }
   }, [postQuery.data?.pages, addDMS]);
 
@@ -168,21 +182,25 @@ const Channel: NextPageWithLayout = () => {
             username={msg.User.username ?? ""}
           />
         ))}
-        {/* <div ref={scrollTargetRef}></div> */}
+        <div ref={scrollTargetRef}></div>
       </div>
       <div className="w-full px-2 pb-2">
         <div className="flex w-full flex-row rounded bg-rad-black-300 p-2">
           <Input
-            className="w-full bg-transparent p-1 outline-none"
+            className="w-full bg-transparent p-1 outline-none placeholder:text-rad-light-600 placeholder:opacity-50 "
+            placeholder={`Message #${Channel?.name}`}
             onChange={(e) => {
               setInput(e.currentTarget.value);
             }}
             value={input}
             onSubmit={() => {
-              mutate({
-                body: input,
-                channelId: channel as string,
-              });
+              console.log(input.trim().length);
+              if (input.trim().length !== 0) {
+                mutate({
+                  body: input,
+                  channelId: channel as string,
+                });
+              }
             }}
           />
         </div>
