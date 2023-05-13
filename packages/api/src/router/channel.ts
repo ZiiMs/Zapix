@@ -5,28 +5,7 @@ import { Publisher } from "@acme/redis";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
-export default createTRPCRouter({
-  // onAdd: protectedProcedure
-  //   .input(
-  //     z.object({
-  //       channelId: z.string(),
-  //     }),
-  //   )
-  //   .subscription(({ input }) => {
-  //     console.log("OnAdd");
-  //     return observable<
-  //       Messages & {
-  //         User: User;
-  //       }
-  //     >((emit) => {
-  //       void redisClient.subscribe("addMessage");
-  //       redisClient.on("message", (channel, data) => {
-  //         console.log("Data", data);
-  //         console.log("Channel", channel);
-  //         emit.next(JSON.parse(data));
-  //       });
-  //     });
-  //   }),
+export const ChannelRouter = createTRPCRouter({
   get: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -45,58 +24,33 @@ export default createTRPCRouter({
 
       return foundChannel;
     }),
-  "messages.getInfinite": protectedProcedure
+
+  create: protectedProcedure
     .input(
       z.object({
-        limit: z.number().min(1).max(100).nullish(),
-        cursor: z.string().or(z.date()).nullish(),
-        id: z.string(),
+        title: z.string(),
+        private: z.boolean(),
+        serverId: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
-      const limit = input.limit ?? 50;
-      const { cursor, id } = input;
-      const items = await ctx.prisma.messages.findMany({
-        where: {
-          channelsId: id,
-        },
-        take: limit + 1,
-        cursor: cursor ? { createdAt: cursor } : undefined,
-        orderBy: {
-          createdAt: "desc",
-        },
-        skip: 0,
-        include: {
-          User: true,
-        },
-      });
-      let nextCursor: typeof cursor | null = null;
-      if (items.length > limit) {
-        const nextItem = items.pop();
-        if (nextItem) {
-          nextCursor = nextItem.createdAt;
-        }
-      }
-      return { items, nextCursor };
-    }),
-  create: protectedProcedure
-    .input(z.object({ body: z.string(), channelId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const newMessage = await ctx.prisma.messages.create({
+      const channel = await ctx.prisma.channels.create({
         data: {
-          body: input.body,
-          channelsId: input.channelId,
-          userId: ctx.session.user.id,
-        },
-        include: {
-          User: true,
+          name: input.title,
+          default: false,
+          private: input.private,
+          Server: {
+            connect: {
+              id: input.serverId,
+            },
+          },
         },
       });
       console.log("Adderwer");
       void Publisher.publish(
-        "addMessage",
-        JSON.stringify({ message: newMessage }),
+        "updateServer",
+        JSON.stringify({ Channel: channel }),
       );
-      return newMessage;
+      return channel;
     }),
 });

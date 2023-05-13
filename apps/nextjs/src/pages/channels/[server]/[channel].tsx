@@ -40,7 +40,7 @@ const Channel: NextPageWithLayout = () => {
     },
   );
 
-  const { mutate } = api.channel.create.useMutation({
+  const { mutate } = api.message.create.useMutation({
     onSuccess: () => {
       setInput("");
       console.log("Mutate success");
@@ -48,7 +48,7 @@ const Channel: NextPageWithLayout = () => {
     },
   });
 
-  const postQuery = api.channel["messages.getInfinite"].useInfiniteQuery(
+  const postQuery = api.message.getInfinite.useInfiniteQuery(
     { limit: 20, id: channel as string },
     {
       getPreviousPageParam: (d) => d.nextCursor,

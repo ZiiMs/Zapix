@@ -6,12 +6,15 @@ import useTitleStore from "src/stores/titleStore";
 
 import { api } from "~/utils/api";
 import ContextMenu from "~/components/contextMenu";
+import Modal from "~/components/modal";
+import CreateChannelModal from "~/components/modal/CreateChannel";
 
 const ChannelList: React.FC = () => {
   const router = useRouter();
   const { server, channel } = router.query;
   const { data: Server } = api.server.get.useQuery({ id: server as string });
   const chanBackgroundRef = useRef<HTMLDivElement | null>(null);
+  const [createChannel, setCreateChannel] = useState(false);
   const Channels = Server?.Channels;
 
   const [menuInfo, setMenuInfo] = useState<{
@@ -65,7 +68,7 @@ const ChannelList: React.FC = () => {
         </div>
         <div
           id="ChannelListBackground"
-          className="h-full"
+          className="h-full space-y-2"
           ref={chanBackgroundRef}
           onContextMenu={(e) => {
             if (e.target == chanBackgroundRef.current) {
@@ -88,7 +91,7 @@ const ChannelList: React.FC = () => {
                     href={`/channels/${server}/${encodeURIComponent(
                       Channel.id,
                     )}`}
-                    className="z-50 flex space-y-2 p-2"
+                    className=" flex px-2 first:pt-2"
                   >
                     <button
                       id={"ChannelButton"}
@@ -144,7 +147,7 @@ const ChannelList: React.FC = () => {
           <ul className="divide cursor-pointer select-none divide-y-[1px] divide-rad-black-300 p-0">
             <li>
               <button
-                className="h-full w-full px-2 py-2 disabled:cursor-not-allowed disabled:bg-transparent disabled:text-red-500/50 disabled:outline-red-500/50 hover:bg-slate-700/40"
+                className="h-full w-full px-2 py-2 disabled:cursor-not-allowed hover:bg-rad-black-600"
                 onClick={(e) => {
                   e.preventDefault();
                   if (menuInfo.selected === null) {
@@ -152,7 +155,7 @@ const ChannelList: React.FC = () => {
                   }
 
                   setMenuInfo({ ...menuInfo, showMenu: false, selected: null });
-                  console.log("Delete");
+                  console.log("Edit");
                 }}
               >
                 Edit
@@ -160,7 +163,7 @@ const ChannelList: React.FC = () => {
             </li>
             <li>
               <button
-                className="h-full w-full px-2 py-2 disabled:cursor-not-allowed disabled:bg-transparent disabled:text-red-500/50 disabled:outline-red-500/50 hover:bg-slate-700/40"
+                className="h-full w-full px-2 py-2 disabled:cursor-not-allowed disabled:bg-transparent hover:bg-rad-black-600"
                 onClick={(e) => {
                   e.preventDefault();
                   if (menuInfo.selected === null) {
@@ -179,12 +182,12 @@ const ChannelList: React.FC = () => {
           <ul className="divide cursor-pointer select-none divide-y-[1px] divide-red-500">
             <li>
               <button
-                className="h-full w-full px-2 py-2 disabled:cursor-not-allowed disabled:bg-transparent disabled:text-red-500/50 disabled:outline-red-500/50 hover:bg-slate-700/40"
+                className="h-full w-full px-2 py-2 disabled:cursor-not-allowed hover:bg-rad-black-600"
                 onClick={(e) => {
                   e.preventDefault();
 
                   setMenuInfo({ ...menuInfo, showMenu: false, selected: null });
-                  console.log("Create");
+                  setCreateChannel(true);
                 }}
               >
                 Create
@@ -193,6 +196,13 @@ const ChannelList: React.FC = () => {
           </ul>
         )}
       </ContextMenu>
+      <CreateChannelModal
+        isOpen={createChannel}
+        onClose={() => {
+          setCreateChannel(false);
+        }}
+        serverId={Server.id}
+      ></CreateChannelModal>
     </>
   );
 };

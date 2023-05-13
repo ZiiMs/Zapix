@@ -45,7 +45,9 @@ const ContextMenu: React.FC<{
   return (
     <div
       ref={ref}
-      className={classNames(`absolute box-border`)}
+      className={classNames(
+        `absolute h-fit w-fit rounded-sm bg-rad-black-800 outline outline-1 outline-rad-black-300 backdrop-blur-sm`,
+      )}
       style={{
         top: y + "px",
         left: x + "px",

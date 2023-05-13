@@ -5,7 +5,7 @@ import { Publisher } from "@acme/redis";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 
-export const MessageRouter = createTRPCRouter({
+export const DirectMessageRouter = createTRPCRouter({
   // onAdd: protectedProcedure
   //   .input(
   //     z.object({

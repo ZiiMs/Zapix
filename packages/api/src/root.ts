@@ -1,18 +1,20 @@
-import channelRouter from "./router/channel";
-import { MessageRouter } from "./router/dms";
+import { ChannelRouter } from "./router/channel";
+import { DirectMessageRouter } from "./router/dms";
 import { friendRouter } from "./router/friends";
+import { ChannelMessageRouter } from "./router/messages";
 import { friendRequestsRouter } from "./router/requests";
 import { serverRouter } from "./router/server";
 import { userRouter } from "./router/user";
 import { createTRPCRouter } from "./trpc";
 
 export const appRouter = createTRPCRouter({
-  channel: channelRouter,
+  channel: ChannelRouter,
   user: userRouter,
   friends: friendRouter,
   request: friendRequestsRouter,
   server: serverRouter,
-  dms: MessageRouter,
+  dms: DirectMessageRouter,
+  message: ChannelMessageRouter,
 });
 
 // export type definition of API
