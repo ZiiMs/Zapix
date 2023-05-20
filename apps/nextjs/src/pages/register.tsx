@@ -7,7 +7,7 @@ import { api } from "~/utils/api";
 import { type NextPageWithLayout } from "./_app";
 
 const Register: NextPageWithLayout = () => {
-  const ref = useRef<HTMLInputElement>(null);
+  const ref = useRef<HTMLInputElement | null>(null);
   const [username, setUsername] = useState("");
   const [isSignOut, setSignOut] = useState(false);
   const router = useRouter();

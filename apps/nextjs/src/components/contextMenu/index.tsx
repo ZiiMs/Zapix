@@ -46,7 +46,7 @@ const ContextMenu: React.FC<{
     <div
       ref={ref}
       className={classNames(
-        `absolute h-fit w-fit rounded-sm bg-rad-black-800 outline outline-1 outline-rad-black-300 backdrop-blur-sm`,
+        `absolute h-max w-max rounded-sm bg-rad-black-800 outline outline-1 outline-rad-black-300 backdrop-blur-sm flex flex-shrink-0`,
       )}
       style={{
         top: y + "px",
