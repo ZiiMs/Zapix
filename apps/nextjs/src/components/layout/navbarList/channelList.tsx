@@ -6,7 +6,6 @@ import useTitleStore from "src/stores/titleStore";
 
 import {api} from "~/utils/api";
 import ContextMenu from "~/components/contextMenu";
-import Modal from "~/components/modal";
 import CreateChannelModal from "~/components/modal/CreateChannel";
 
 const ChannelList: React.FC = () => {
@@ -30,7 +29,7 @@ const ChannelList: React.FC = () => {
     });
 
     const setTitle = useTitleStore.use.setTitle();
-    const title = useTitleStore.use.title();
+    // const title = useTitleStore.use.title();
 
     useMemo(() => {
         Channels?.map((c) => {
@@ -48,13 +47,13 @@ const ChannelList: React.FC = () => {
     const CreateServerInvite = () => (
         <li>
             <button
-                className="h-full w-fit px-2 p- py-2 disabled:cursor-not-allowed hover:bg-rad-black-600"
+                className="h-full w-full px-2 py-2 disabled:cursor-not-allowed hover:bg-rad-black-600"
                 onClick={(e) => {
                     e.preventDefault();
                     setMenuInfo({...menuInfo, showMenu: false, selected: null});
                 }}
             >
-                Create invite link
+                Invite
             </button>
         </li>
     )

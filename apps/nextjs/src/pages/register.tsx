@@ -1,9 +1,10 @@
-import { signOut, useSession } from "next-auth/react";
+import { useEffect, useRef, useState, type ReactElement } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState, type ReactElement } from "react";
-import LoginLayout from "~/components/layout/login";
+import { signOut, useSession } from "next-auth/react";
+
 import { api } from "~/utils/api";
+import LoginLayout from "~/components/layout/login";
 import { type NextPageWithLayout } from "./_app";
 
 const Register: NextPageWithLayout = () => {
@@ -55,8 +56,8 @@ const Register: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>Radiance - Login</title>
-        <meta name="description" content="Login page for radiance app." />
+        <title>Zappix - Login</title>
+        <meta name="description" content="Login page for Zappix app." />
         {/* <link rel='icon' href='/favicon.ico' /> */}
       </Head>
       <div className="flex flex-col items-center justify-center rounded bg-rad-black-900 p-4 shadow-black drop-shadow-xl">

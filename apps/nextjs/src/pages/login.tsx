@@ -1,6 +1,7 @@
-import { signIn } from "next-auth/react";
-import Head from "next/head";
 import { type ReactElement } from "react";
+import Head from "next/head";
+import { signIn } from "next-auth/react";
+
 import LoginLayout from "~/components/layout/login";
 import { type NextPageWithLayout } from "./_app";
 
@@ -8,8 +9,8 @@ const Login: NextPageWithLayout = () => {
   return (
     <>
       <Head>
-        <title>Radiance - Login</title>
-        <meta name="description" content="Login page for radiance app." />
+        <title>Zappix - Login</title>
+        <meta name="description" content="Login page for Zappix app." />
         {/* <link rel='icon' href='/favicon.ico' /> */}
       </Head>
       <div className="rounded bg-rad-black-900 p-4 shadow-black drop-shadow-xl">
