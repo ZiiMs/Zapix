@@ -9,8 +9,8 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { string } from "zod";
 
-import channel from "@acme/api/src/router/channel";
-import { type DirectMessages, type Messages, type User } from "@acme/db";
+import channel from "@zappix/api/src/router/channel";
+import { type DirectMessages, type Messages, type User } from "@zappix/db";
 
 import { api } from "~/utils/api";
 import Message from "~/components/Message";

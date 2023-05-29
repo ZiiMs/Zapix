@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
-import { Publisher } from "@acme/redis";
+import { Publisher } from "@zappix/redis";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 

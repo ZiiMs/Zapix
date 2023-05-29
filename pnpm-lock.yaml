@@ -4,7 +4,7 @@ importers:
 
   .:
     dependencies:
-      '@acme/eslint-config':
+      '@zappix/eslint-config':
         specifier: ^0.1.0
         version: link:packages/config/eslint
       '@ianvs/prettier-plugin-sort-imports':
@@ -34,16 +34,16 @@ importers:
 
   apps/nextjs:
     dependencies:
-      '@acme/api':
+      '@zappix/api':
         specifier: ^0.1.0
         version: link:../../packages/api
-      '@acme/auth':
+      '@zappix/auth':
         specifier: ^0.1.0
         version: link:../../packages/auth
-      '@acme/db':
+      '@zappix/db':
         specifier: ^0.1.0
         version: link:../../packages/db
-      '@acme/tailwind-config':
+      '@zappix/tailwind-config':
         specifier: ^0.1.0
         version: link:../../packages/config/tailwind
       '@t3-oss/env-nextjs':
@@ -92,7 +92,7 @@ importers:
         specifier: ^4.3.8
         version: 4.3.8(react@18.2.0)
     devDependencies:
-      '@acme/eslint-config':
+      '@zappix/eslint-config':
         specifier: ^0.1.0
         version: link:../../packages/config/eslint
       '@types/node':
@@ -125,16 +125,16 @@ importers:
 
   apps/websocket:
     dependencies:
-      '@acme/api':
+      '@zappix/api':
         specifier: ^0.1.0
         version: link:../../packages/api
-      '@acme/auth':
+      '@zappix/auth':
         specifier: ^0.1.0
         version: link:../../packages/auth
-      '@acme/db':
+      '@zappix/db':
         specifier: ^0.1.0
         version: link:../../packages/db
-      '@acme/redis':
+      '@zappix/redis':
         specifier: ^0.1.0
         version: link:../../packages/redis
       '@trpc/server':
@@ -159,13 +159,13 @@ importers:
 
   packages/api:
     dependencies:
-      '@acme/auth':
+      '@zappix/auth':
         specifier: ^0.1.0
         version: link:../auth
-      '@acme/db':
+      '@zappix/db':
         specifier: ^0.1.0
         version: link:../db
-      '@acme/redis':
+      '@zappix/redis':
         specifier: ^0.1.0
         version: link:../redis
       '@trpc/client':
@@ -181,7 +181,7 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
     devDependencies:
-      '@acme/eslint-config':
+      '@zappix/eslint-config':
         specifier: ^0.1.0
         version: link:../config/eslint
       eslint:
@@ -193,7 +193,7 @@ importers:
 
   packages/auth:
     dependencies:
-      '@acme/db':
+      '@zappix/db':
         specifier: ^0.1.0
         version: link:../db
       '@next-auth/prisma-adapter':
@@ -212,7 +212,7 @@ importers:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
     devDependencies:
-      '@acme/eslint-config':
+      '@zappix/eslint-config':
         specifier: ^0.1.0
         version: link:../config/eslint
       eslint:

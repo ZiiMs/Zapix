@@ -1,7 +1,7 @@
 import { WebSocketServer } from "ws";
 
-import { type DirectMessages, type Messages, type User } from "@acme/db";
-import { Subscriber } from "@acme/redis";
+import { type DirectMessages, type Messages, type User } from "@zappix/db";
+import { Subscriber } from "@zappix/redis";
 
 import { heartbeat, keepAlive } from "./utils/keepalive.js";
 import { type Socket } from "./utils/state.js";
