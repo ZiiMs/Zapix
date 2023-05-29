@@ -1,6 +1,6 @@
 import { createNextApiHandler } from "@trpc/server/adapters/next";
 
-import { appRouter, createTRPCContext } from "@zappix/api";
+import { appRouter, createTRPCContext } from "@zapix/api";
 
 // export API handler
 export default createNextApiHandler({

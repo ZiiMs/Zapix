@@ -3,7 +3,7 @@ import { createTRPCNext } from "@trpc/next";
 import superjson from "superjson";
 import { type StoreApi, type UseBoundStore } from "zustand";
 
-import { type AppRouter } from "@zappix/api";
+import { type AppRouter } from "@zapix/api";
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return ""; // browser should use relative url
@@ -67,4 +67,4 @@ export const api = createTRPCNext<AppRouter>({
   ssr: false,
 });
 
-export { type RouterInputs, type RouterOutputs } from "@zappix/api";
+export { type RouterInputs, type RouterOutputs } from "@zapix/api";

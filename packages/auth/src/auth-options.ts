@@ -7,7 +7,7 @@ import {
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 
-import { prisma } from "@zappix/db";
+import { prisma } from "@zapix/db";
 import { type GetServerSidePropsContext } from "next";
 
 /// const env = dynamic(() => import("../env.mjs").then((mod) => mod.env));

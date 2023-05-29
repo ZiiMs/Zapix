@@ -11,7 +11,7 @@ import {
 import { useRouter } from "next/router";
 import useTitleStore from "src/stores/titleStore";
 
-import { type Messages, type User } from "@zappix/db";
+import { type Messages, type User } from "@zapix/db";
 
 import { api } from "~/utils/api";
 import Message from "~/components/Message";

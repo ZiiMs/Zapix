@@ -1,5 +1,5 @@
 {
-  "name": "@zappix/nextjs",
+  "name": "@zapix/nextjs",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -13,10 +13,10 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@zappix/api": "^0.1.0",
-    "@zappix/auth": "^0.1.0",
-    "@zappix/db": "^0.1.0",
-    "@zappix/tailwind-config": "^0.1.0",
+    "@zapix/api": "^0.1.0",
+    "@zapix/auth": "^0.1.0",
+    "@zapix/db": "^0.1.0",
+    "@zapix/tailwind-config": "^0.1.0",
     "@t3-oss/env-nextjs": "^0.2.2",
     "@tanstack/react-query": "^4.29.5",
     "@trpc/client": "^10.23.0",
@@ -34,7 +34,7 @@
     "zustand": "^4.3.8"
   },
   "devDependencies": {
-    "@zappix/eslint-config": "^0.1.0",
+    "@zapix/eslint-config": "^0.1.0",
     "@types/node": "^18.16.3",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.1",
