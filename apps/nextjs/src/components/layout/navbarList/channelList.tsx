@@ -7,13 +7,18 @@ import useTitleStore from "src/stores/titleStore";
 import { api } from "~/utils/api";
 import ContextMenu from "~/components/contextMenu";
 import CreateChannelModal from "~/components/modal/CreateChannel";
+import EditChannelModal from "~/components/modal/EditChannel";
 
 const ChannelList: React.FC = () => {
   const router = useRouter();
   const { server, channel } = router.query;
   const { data: Server } = api.server.get.useQuery({ id: server as string });
   const chanBackgroundRef = useRef<HTMLDivElement | null>(null);
-  const [createChannel, setCreateChannel] = useState(false);
+  const [modalStatus, toggleModal] = useState({
+    isAnyOpen: false,
+    createChannel: false,
+    editChannel: false,
+  });
   const Channels = Server?.Channels;
 
   const [menuInfo, setMenuInfo] = useState<{
@@ -50,6 +55,7 @@ const ChannelList: React.FC = () => {
         className="h-full w-full px-2 py-2 disabled:cursor-not-allowed hover:bg-rad-black-600"
         onClick={(e) => {
           e.preventDefault();
+          console.log("NewTest");
           setMenuInfo({ ...menuInfo, showMenu: false, selected: null });
         }}
       >
@@ -169,6 +175,12 @@ const ChannelList: React.FC = () => {
 
                   setMenuInfo({ ...menuInfo, showMenu: false, selected: null });
                   console.log("Edit");
+                  if (modalStatus.isAnyOpen) return;
+                  toggleModal({
+                    ...modalStatus,
+                    isAnyOpen: true,
+                    editChannel: true,
+                  });
                 }}
               >
                 Edit
@@ -198,11 +210,14 @@ const ChannelList: React.FC = () => {
                 className="h-full w-full px-2 py-2 disabled:cursor-not-allowed hover:bg-rad-black-600"
                 onClick={(e) => {
                   e.preventDefault();
-                  if (menuInfo.selected === null) {
-                    return;
-                  }
+                  console.log("Clicked create");
                   setMenuInfo({ ...menuInfo, showMenu: false, selected: null });
-                  setCreateChannel(true);
+                  if (modalStatus.isAnyOpen) return;
+                  toggleModal({
+                    ...modalStatus,
+                    isAnyOpen: true,
+                    createChannel: true,
+                  });
                 }}
               >
                 Create
@@ -212,10 +227,21 @@ const ChannelList: React.FC = () => {
           </ul>
         )}
       </ContextMenu>
-      <CreateChannelModal
-        isOpen={createChannel}
+      <EditChannelModal
+        isOpen={modalStatus.editChannel}
         onClose={() => {
-          setCreateChannel(false);
+          toggleModal({ ...modalStatus, isAnyOpen: false, editChannel: false });
+        }}
+        serverId={Server.id}
+      ></EditChannelModal>
+      <CreateChannelModal
+        isOpen={modalStatus.createChannel}
+        onClose={() => {
+          toggleModal({
+            ...modalStatus,
+            isAnyOpen: false,
+            createChannel: false,
+          });
         }}
         serverId={Server.id}
       ></CreateChannelModal>
