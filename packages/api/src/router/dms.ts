@@ -92,7 +92,7 @@ export const DirectMessageRouter = createTRPCRouter({
       const newMessage = await ctx.prisma.directMessages.create({
         data: {
           text: input.text,
-          senderId: ctx.session.user.id,
+          senderId: ctx.auth.userId,
           recieverId: input.reciever,
         },
         include: {

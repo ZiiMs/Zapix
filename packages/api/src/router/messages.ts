@@ -47,7 +47,7 @@ export const ChannelMessageRouter = createTRPCRouter({
         data: {
           body: input.body,
           channelsId: input.channelId,
-          userId: ctx.session.user.id,
+          userId: ctx.auth.userId,
         },
         include: {
           User: true,

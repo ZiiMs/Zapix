@@ -7,12 +7,18 @@
  * The pieces you will need to use are documented accordingly near the end
  */
 
+import {
+  getAuth,
+  type SignedInAuthObject,
+  type SignedOutAuthObject,
+} from "@clerk/nextjs/server";
 import { TRPCError, initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import { getServerSession, type Session } from "@zapix/auth";
+// import { getAuth, type AuthContext } from "@zapix/auth/getAuth";
+// import { getServerSession, type Session } from "@zapix/auth";
 import { prisma } from "@zapix/db";
 
 /**
@@ -24,10 +30,13 @@ import { prisma } from "@zapix/db";
  * processing a request
  *
  */
-type CreateContextOptions = {
-  session: Session | null;
-};
-
+// type CreateContextOptions = {
+//   session: Session | null;
+// };
+//
+interface AuthContext {
+  auth: SignedInAuthObject | SignedOutAuthObject;
+}
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use
  * it, you can export it from here
@@ -37,9 +46,9 @@ type CreateContextOptions = {
  * - trpc's `createSSGHelpers` where we don't have req/res
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
-const createInnerTRPCContext = (opts: CreateContextOptions) => {
+const createInnerTRPCContext = (opts: AuthContext) => {
   return {
-    session: opts.session,
+    auth: opts.auth,
     prisma,
   };
 };
@@ -51,13 +60,13 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  */
 
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
-  const { req, res } = opts;
+  // const { req, res } = opts;
 
   // Get the session from the server using the unstable_getServerSession wrapper function
-  const session = await getServerSession({ req, res });
+  // const session = await getServerSession({ req, res });
 
   return createInnerTRPCContext({
-    session,
+    auth: getAuth(opts.req),
   });
 };
 
@@ -108,13 +117,13 @@ export const publicProcedure = t.procedure;
  * procedure
  */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session?.user) {
+  if (!ctx.auth.userId) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({
     ctx: {
+      auth: ctx.auth,
       // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
     },
   });
 });

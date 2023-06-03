@@ -13,10 +13,16 @@ const config = {
       {
         hostname: "lh3.googleusercontent.com",
       },
+      {
+        hostname: "images.clerk.dev",
+      },
+      {
+        hostname: "img.clerk.com",
+      },
     ],
   },
   /** Enables hot reloading for local packages without a build step */
-  transpilePackages: ["@zapix/api", "@zapix/auth", "@zapix/db"],
+  transpilePackages: ["@zapix/api", "@zapix/auth", "@zapix/db", "@zapix/redis"],
   /** We already do linting and typechecking as separate tasks in CI */
   eslint: { ignoreDuringBuilds: !!process.env.CI },
   typescript: { ignoreBuildErrors: !!process.env.CI },

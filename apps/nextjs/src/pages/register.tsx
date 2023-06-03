@@ -1,13 +1,17 @@
 import { useEffect, useRef, useState, type ReactElement } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { signOut, useSession } from "next-auth/react";
+// import { signOut, useSession } from "next-auth/react";
+
+import { useSignUp } from "@clerk/clerk-react";
 
 import { api } from "~/utils/api";
 import LoginLayout from "~/components/layout/login";
 import { type NextPageWithLayout } from "./_app";
 
 const Register: NextPageWithLayout = () => {
+  const { signUp, isLoaded, setActive } = useSignUp();
+
   const ref = useRef<HTMLInputElement | null>(null);
   const [username, setUsername] = useState("");
   const [isSignOut, setSignOut] = useState(false);
@@ -20,6 +24,7 @@ const Register: NextPageWithLayout = () => {
       },
     });
 
+  console.log(isLoaded, signUp);
   const { mutate: DeleteUser, status: deleteStatus } =
     api.user.delete.useMutation({
       onSuccess: (data) => {
@@ -28,7 +33,7 @@ const Register: NextPageWithLayout = () => {
       },
     });
 
-  const { data: session, status } = useSession();
+  // const { data: session, status } = useSession();
 
   useEffect(() => {
     if (ref.current !== null) {
@@ -36,22 +41,32 @@ const Register: NextPageWithLayout = () => {
     }
   });
 
-  useEffect(() => {
-    const handleSignOut = async () => {
-      const data = await signOut({ redirect: false, callbackUrl: "/login" });
-      console.log(data);
-      await router.push(data.url);
-    };
-
-    if (isSignOut) {
-      void handleSignOut();
-      setSignOut(false);
-    }
-  }, [isSignOut, router]);
-
-  if (status === "loading" || !session) {
-    return <div>Loading....</div>;
+  if (!isLoaded) {
+    return;
   }
+
+  const handleUpdate = async () => {
+    console.log("Updating");
+    try {
+      const res = await signUp?.update({
+        username: username,
+      });
+
+      if (res && res.status === "complete") {
+        console.log(res);
+        if (res.createdSessionId) {
+          await setActive({ session: res.createdSessionId });
+          router.push("/");
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // if (status === "loading" || !isSignedIn) {
+  // return <div>Loading....</div>;
+  // }
 
   return (
     <>
@@ -67,7 +82,7 @@ const Register: NextPageWithLayout = () => {
           <input
             className="rounded bg-transparent p-1 outline outline-2 outline-rad-black-600 disabled:cursor-not-allowed disabled:bg-rad-black-800/60 disabled:text-rad-light-200 disabled:text-opacity-30"
             disabled={true}
-            value={session.user?.name || ""}
+            value={signUp?.firstName || ""}
           />
         </div>
         <div className="flex flex-col">
@@ -87,31 +102,17 @@ const Register: NextPageWithLayout = () => {
           <input
             className="rounded bg-transparent p-1 outline outline-2 outline-rad-black-600 disabled:cursor-not-allowed disabled:bg-rad-black-800/60 disabled:text-rad-light-200 disabled:text-opacity-30"
             disabled={true}
-            value={session.user?.email || ""}
+            value={signUp?.emailAddress || ""}
           />
         </div>
         <div className="flex w-full flex-row justify-between pt-4">
-          <button
-            className="rounded bg-rad-black-600 p-2"
-            disabled={deleteStatus === "loading"}
-            onClick={(e) => {
-              e.preventDefault();
-              if (session.user) {
-                DeleteUser({ id: session.user?.id });
-              } else {
-                void router.push("/login");
-              }
-            }}
-          >
-            Close
-          </button>
           <button
             className="rounded bg-rad-black-600 p-2"
             disabled={createStatus === "loading"}
             onClick={(e) => {
               e.preventDefault();
               if (username !== "") {
-                CreateUser({ username: username });
+                handleUpdate();
               }
             }}
           >

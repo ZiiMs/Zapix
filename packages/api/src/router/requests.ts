@@ -6,7 +6,7 @@ export const friendRequestsRouter = createTRPCRouter({
   getAll: protectedProcedure.query(async ({ ctx }) => {
     const friendRequests = await ctx.prisma.user.findUnique({
       where: {
-        id: ctx.session.user.id,
+        id: ctx.auth.userId,
       },
       select: {
         FriendRequests: true,
@@ -18,7 +18,7 @@ export const friendRequestsRouter = createTRPCRouter({
   getSent: protectedProcedure.query(async ({ ctx }) => {
     const friendRequests = await ctx.prisma.user.findUnique({
       where: {
-        id: ctx.session.user.id,
+        id: ctx.auth.userId,
       },
       select: {
         SentFriendRequets: true,
@@ -37,7 +37,7 @@ export const friendRequestsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const acceptedFriends = await ctx.prisma.user.update({
         where: {
-          id: ctx.session.user.id,
+          id: ctx.auth.userId,
         },
         data: {
           FriendRequests: {
@@ -63,7 +63,7 @@ export const friendRequestsRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const declinedFriend = await ctx.prisma.user.update({
         where: {
-          id: ctx.session.user.id,
+          id: ctx.auth.userId,
         },
         data: {
           FriendRequests: {

@@ -9,7 +9,7 @@ export const serverRouter = createTRPCRouter({
       where: {
         Users: {
           some: {
-            id: ctx.session?.user?.id,
+            id: ctx.auth.userId,
           },
         },
       },
@@ -40,7 +40,7 @@ export const serverRouter = createTRPCRouter({
           image: input.image ?? undefined,
           Users: {
             connect: {
-              id: ctx.session?.user?.id,
+              id: ctx.auth.userId,
             },
           },
           Channels: {

@@ -37,6 +37,7 @@ export const env = createEnv({
   client: {
     // NEXT_PUBLIC_CLIENTVAR: z.string(),
     NEXT_PUBLIC_WS_HOST: z.string(),
+    NEXT_PUBLIC_CLERK_WEBHOOK_SECRET: z.string(),
   },
   /**
    * Destructure all variables from `process.env` to make sure they aren't tree-shaken away.
@@ -54,6 +55,8 @@ export const env = createEnv({
     // GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     NEXT_PUBLIC_WS_HOST: process.env.NEXT_PUBLIC_WS_HOST,
     PORT: process.env.PORT,
+    NEXT_PUBLIC_CLERK_WEBHOOK_SECRET:
+      process.env.NEXT_PUBLIC_CLERK_WEBHOOK_SECRET,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
 });

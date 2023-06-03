@@ -1,41 +1,22 @@
-import { getSession, useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
+// import { getSession, useSession } from 'next-auth/react';
+
 import React, {
   useEffect,
   type PropsWithChildren,
-  type ReactNode
-} from 'react';
+  type ReactNode,
+} from "react";
+import { useRouter } from "next/router";
+import { useUser } from "@clerk/clerk-react";
 
 const Layout: React.FC<{ children: PropsWithChildren<ReactNode> }> = ({
   children,
 }) => {
-  const router = useRouter();
-  const { status } = useSession({
-    required: true,
-    onUnauthenticated() {
-      console.log('Unauthenticated');
-      void router.push('/login');
-    },
-  });
-
-  useEffect(() => {
-    const checkIsRegistered = async () => {
-      const data = await getSession({ broadcast: true });
-      if (!data?.user?.isRegistered) {
-        void router.push('/register');
-      }
-    };
-    if (status === 'authenticated') {
-      void checkIsRegistered();
-    }
-  }, [router, status]);
-
-  if (status === 'loading') {
+  const { isLoaded } = useUser();
+  if (!isLoaded) {
     return <div>Loading</div>;
   }
 
-  return <div className='flex flex-row overflow-y-hidden'>{children}</div>;
+  return <div className="flex flex-row overflow-y-hidden">{children}</div>;
 };
 
 export default Layout;
-

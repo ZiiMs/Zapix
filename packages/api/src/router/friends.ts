@@ -8,7 +8,7 @@ export const friendRouter = createTRPCRouter({
     console.log("Freidns!Q@?#");
     const friends = await ctx.prisma.user.findUnique({
       where: {
-        id: ctx.session.user.id,
+        id: ctx.auth.userId,
       },
       select: {
         FriendOf: {
@@ -69,13 +69,13 @@ export const friendRouter = createTRPCRouter({
               User: {
                 username: input.username,
               },
-              friendId: ctx.session.user.id,
+              friendId: ctx.auth.userId,
             },
             {
               Friend: {
                 username: input.username,
               },
-              userId: ctx.session.user.id,
+              userId: ctx.auth.userId,
             },
           ],
         },
@@ -86,7 +86,7 @@ export const friendRouter = createTRPCRouter({
           username: input.username,
           SentFriendRequets: {
             some: {
-              id: ctx.session.user.id,
+              id: ctx.auth.userId,
             },
           },
         },
@@ -115,12 +115,12 @@ export const friendRouter = createTRPCRouter({
             data: {
               SentFriendRequets: {
                 disconnect: {
-                  id: ctx.session.user.id,
+                  id: ctx.auth.userId,
                 },
               },
               Friend: {
                 create: {
-                  friendId: ctx.session.user.id,
+                  friendId: ctx.auth.userId,
                 },
               },
             },
@@ -144,7 +144,7 @@ export const friendRouter = createTRPCRouter({
           data: {
             FriendRequests: {
               connect: {
-                id: ctx.session.user.id,
+                id: ctx.auth.userId,
               },
             },
           },

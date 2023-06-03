@@ -1,25 +1,22 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
-  getSession: protectedProcedure.query(({ ctx }) => {
-    return ctx.session;
-  }),
-  create: protectedProcedure
-    .input(z.object({ username: z.string() }))
-    .mutation(async ({ ctx, input }) => {
-      const newUser = await ctx.prisma.user.update({
-        data: {
-          username: input.username,
-          isRegistered: true,
-        },
-        where: {
-          id: ctx.session.user.id,
-        },
-      });
-      return newUser;
-    }),
+  // create: protectedProcedure
+  //   .input(z.object({ username: z.string() }))
+  //   .mutation(async ({ ctx, input }) => {
+  //     const newUser = await ctx.prisma.user.update({
+  //       data: {
+  //         username: input.username,
+  //         isRegistered: true,
+  //       },
+  //       where: {
+  //         id: ctx.auth.userId,
+  //       },
+  //     });
+  //     return newUser;
+  //   }),
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -27,11 +24,43 @@ export const userRouter = createTRPCRouter({
         where: {
           id: input.id,
         },
-        include: {
-          accounts: true,
-          sessions: true,
-        },
       });
       return deletedUser;
+    }),
+  upsert: publicProcedure
+    .input(
+      z.object({
+        id: z.string().min(1),
+        email: z.string().email(),
+        emailVerified: z.boolean(),
+        name: z.string(),
+        username: z.string().nullable(),
+        image: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const upsertUser = await ctx.prisma.user.upsert({
+        where: {
+          id: input.id,
+        },
+        update: {
+          id: input.id,
+          email: input.email,
+          emailVerified: input.emailVerified,
+          name: input.name,
+          image: input.image,
+          username: input.username || input.id,
+        },
+        create: {
+          id: input.id,
+          email: input.email,
+          emailVerified: input.emailVerified,
+          name: input.name,
+          image: input.image,
+          username: input.username || input.id,
+        },
+      });
+
+      return upsertUser;
     }),
 });

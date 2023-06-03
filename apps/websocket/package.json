@@ -15,7 +15,6 @@
   "license": "ISC",
   "dependencies": {
     "@zapix/api": "^0.1.0",
-    "@zapix/auth": "^0.1.0",
     "@zapix/db": "^0.1.0",
     "@zapix/redis": "^0.1.0",
     "@trpc/server": "^10.23.0",

@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import classNames from "classnames";
 import useTitleStore from "src/stores/titleStore";
 
+import { type Channels } from "@zapix/db";
+
 import { api } from "~/utils/api";
 import ContextMenu from "~/components/contextMenu";
 import CreateChannelModal from "~/components/modal/CreateChannel";
@@ -14,17 +16,27 @@ const ChannelList: React.FC = () => {
   const { server, channel } = router.query;
   const { data: Server } = api.server.get.useQuery({ id: server as string });
   const chanBackgroundRef = useRef<HTMLDivElement | null>(null);
-  const [modalStatus, toggleModal] = useState({
+  const [modalStatus, toggleModal] = useState<{
+    isAnyOpen: boolean;
+    createChannel: boolean;
+    editChannel: {
+      isOpen: boolean;
+      channel: Channels | null;
+    };
+  }>({
     isAnyOpen: false,
     createChannel: false,
-    editChannel: false,
+    editChannel: {
+      isOpen: false,
+      channel: null,
+    },
   });
   const Channels = Server?.Channels;
 
   const [menuInfo, setMenuInfo] = useState<{
     x: number;
     y: number;
-    selected: string | null;
+    selected: Channels | null;
     showMenu: boolean;
   }>({
     x: 0,
@@ -104,53 +116,53 @@ const ChannelList: React.FC = () => {
         >
           {Channels
             ? Channels.map((Channel) => {
-                return (
-                  <Link
-                    key={Channel.id}
-                    href={`/channels/${server}/${encodeURIComponent(
-                      Channel.id,
-                    )}`}
-                    className=" flex px-2 first:pt-2"
+              return (
+                <Link
+                  key={Channel.id}
+                  href={`/channels/${server}/${encodeURIComponent(
+                    Channel.id,
+                  )}`}
+                  className=" flex px-2 first:pt-2"
+                >
+                  <button
+                    id={"ChannelButton"}
+                    className={classNames(
+                      "flex  w-full flex-row items-center gap-x-2 rounded p-2",
+                      Channel.id === channel
+                        ? "bg-rad-black-500"
+                        : "bg-rad-black-700 hover:bg-rad-black-500/75",
+                    )}
+                    onClick={() => {
+                      setTitle(Channel.name ?? "");
+                    }}
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      setMenuInfo({
+                        showMenu: true,
+                        x: e.pageX,
+                        y: e.pageY,
+                        selected: Channel,
+                      });
+                    }}
                   >
-                    <button
-                      id={"ChannelButton"}
-                      className={classNames(
-                        "flex  w-full flex-row items-center gap-x-2 rounded p-2",
-                        Channel.id === channel
-                          ? "bg-rad-black-500"
-                          : "bg-rad-black-700 hover:bg-rad-black-500/75",
-                      )}
-                      onClick={() => {
-                        setTitle(Channel.name ?? "");
-                      }}
-                      onContextMenu={(e) => {
-                        e.preventDefault();
-                        setMenuInfo({
-                          showMenu: true,
-                          x: e.pageX,
-                          y: e.pageY,
-                          selected: Channel.id,
-                        });
-                      }}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="h-6 w-6"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                        className="h-6 w-6"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
+                      <path
+                        fillRule="evenodd"
+                        d="M4.848 2.771A49.144 49.144 0 0112 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 01-3.476.383.39.39 0 00-.297.17l-2.755 4.133a.75.75 0 01-1.248 0l-2.755-4.133a.39.39 0 00-.297-.17 48.9 48.9 0 01-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97zM6.75 8.25a.75.75 0 01.75-.75h9a.75.75 0 010 1.5h-9a.75.75 0 01-.75-.75zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H7.5z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
 
-                      {Channel.name}
-                    </button>
-                  </Link>
-                );
-              })
+                    {Channel.name}
+                  </button>
+                </Link>
+              );
+            })
             : null}
         </div>
       </div>
@@ -173,14 +185,18 @@ const ChannelList: React.FC = () => {
                     return;
                   }
 
-                  setMenuInfo({ ...menuInfo, showMenu: false, selected: null });
+                  // setMenuInfo({ ...menuInfo, showMenu: false, selected: null });
                   console.log("Edit");
                   if (modalStatus.isAnyOpen) return;
                   toggleModal({
                     ...modalStatus,
                     isAnyOpen: true,
-                    editChannel: true,
+                    editChannel: {
+                      isOpen: true,
+                      channel: menuInfo.selected,
+                    },
                   });
+                  setMenuInfo({ ...menuInfo, showMenu: false, selected: null });
                 }}
               >
                 Edit
@@ -220,20 +236,30 @@ const ChannelList: React.FC = () => {
                   });
                 }}
               >
-                Create
+                {}
               </button>
             </li>
             <CreateServerInvite />
           </ul>
         )}
       </ContextMenu>
-      <EditChannelModal
-        isOpen={modalStatus.editChannel}
-        onClose={() => {
-          toggleModal({ ...modalStatus, isAnyOpen: false, editChannel: false });
-        }}
-        serverId={Server.id}
-      ></EditChannelModal>
+      {modalStatus.editChannel.channel ? (
+        <EditChannelModal
+          isOpen={modalStatus.editChannel.isOpen}
+          onClose={() => {
+            toggleModal({
+              ...modalStatus,
+              isAnyOpen: false,
+              editChannel: {
+                channel: null,
+                isOpen: false,
+              },
+            });
+          }}
+          channel={modalStatus.editChannel.channel}
+          serverId={Server.id}
+        ></EditChannelModal>
+      ) : null}
       <CreateChannelModal
         isOpen={modalStatus.createChannel}
         onClose={() => {

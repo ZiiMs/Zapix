@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { signOut, useSession } from "next-auth/react";
+// import { signOut, useSession } from "next-auth/react";
+import { useClerk, useUser } from "@clerk/clerk-react";
 import useTitleStore from "src/stores/titleStore";
 
 import { api } from "~/utils/api";
@@ -16,12 +17,13 @@ export enum Types {
 }
 
 const Navbar: React.FC<{ type?: Types }> = ({ type = Types.Friends }) => {
+  const { signOut } = useClerk();
+  const { user } = useUser();
   const [openModal, setOpenModal] = useState(false);
   const router = useRouter();
   const { server } = router.query;
   const { data: Servers } = api.server.getAll.useQuery();
 
-  const { data: session } = useSession({ required: true });
   const setTitle = useTitleStore.use.setTitle();
 
   const DmButton = () => {
@@ -74,23 +76,22 @@ const Navbar: React.FC<{ type?: Types }> = ({ type = Types.Friends }) => {
             <div className="mt-2 flex flex-col space-y-2">
               {Servers
                 ? Servers.map((server) => (
-                    <Link
-                      key={server.id}
-                      href={`/channels/${encodeURIComponent(server.id)}/${
-                        server.defaultChannelId ?? ""
+                  <Link
+                    key={server.id}
+                    href={`/channels/${encodeURIComponent(server.id)}/${server.defaultChannelId ?? ""
                       }`}
-                    >
-                      <CustomImage
-                        name={server.name}
-                        src={server.image ?? undefined}
-                        width={44}
-                        height={44}
-                        className={
-                          "h-[44px] w-[44px] rounded-full bg-rad-black-500 text-lg font-bold hover:animate-roundedOn"
-                        }
-                      />
-                    </Link>
-                  ))
+                  >
+                    <CustomImage
+                      name={server.name}
+                      src={server.image ?? undefined}
+                      width={44}
+                      height={44}
+                      className={
+                        "h-[44px] w-[44px] rounded-full bg-rad-black-500 text-lg font-bold hover:animate-roundedOn"
+                      }
+                    />
+                  </Link>
+                ))
                 : null}
               <button
                 className="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-rad-black-500 p-2 hover:animate-roundedOn"
@@ -123,8 +124,8 @@ const Navbar: React.FC<{ type?: Types }> = ({ type = Types.Friends }) => {
             {type === Types.Friends ? <FriendsList /> : <ChannelList />}
             <div className="flex flex-row items-center bg-rad-black-900 p-2 ">
               <CustomImage
-                name={session?.user?.name ?? ""}
-                src={session?.user?.image ?? undefined}
+                name={user?.fullName ?? ""}
+                src={user?.imageUrl ?? undefined}
                 width={32}
                 height={32}
                 className={"rounded-full bg-rad-black-500 text-lg font-bold"}
@@ -132,9 +133,7 @@ const Navbar: React.FC<{ type?: Types }> = ({ type = Types.Friends }) => {
                   void signOut();
                 }}
               />
-              <span className="px-2 font-semibold">
-                {session?.user?.username}
-              </span>
+              <span className="px-2 font-semibold">{user?.username}</span>
             </div>
           </div>
           <CreateServerModal

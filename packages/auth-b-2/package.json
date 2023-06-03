@@ -1,5 +1,5 @@
 {
-  "name": "@zapix/api",
+  "name": "@zapix/auth",
   "version": "0.1.0",
   "main": "./index.ts",
   "types": "./index.ts",
@@ -11,12 +11,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@zapix/db": "^0.1.0",
-    "@zapix/redis": "^0.1.0",
-    "@trpc/client": "^10.23.0",
-    "@trpc/server": "^10.23.0",
-    "superjson": "1.9.1",
-    "zod": "^3.21.4"
+    "@clerk/nextjs": "^4.19.0",
+    "@zapix/db": "^0.1.0"
   },
   "devDependencies": {
     "@zapix/eslint-config": "^0.1.0",

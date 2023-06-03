@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 
+import { type Channels } from "@zapix/db";
+
 import { api } from "~/utils/api";
 // import Input from '../input';
 import Input from "~/components/input";
@@ -8,14 +10,16 @@ import Modal from ".";
 const EditChannelModal: React.FC<{
   isOpen: boolean;
   onClose: () => void;
-  channelId: string;
-}> = ({ isOpen, onClose, channelId }) => {
-  const [channelName, setChannelName] = useState("");
-  const [isPrivate, setIsPrivate] = useState(false);
+  channel: Channels;
+  serverId: string;
+}> = ({ isOpen, onClose, channel, serverId }) => {
+  const [channelName, setChannelName] = useState(channel.name);
+  const [isPrivate, setIsPrivate] = useState(channel.private);
+  const [channelId] = useState(channel.id);
 
   const client = api.useContext();
-  const { mutate: createChannel, isLoading: isCreating } =
-    api.channel.create.useMutation({
+  const { mutate: updateChannel, isLoading: isUpdating } =
+    api.channel.update.useMutation({
       onSuccess: async (data) => {
         await client.server.get.invalidate({
           id: serverId,
@@ -26,19 +30,19 @@ const EditChannelModal: React.FC<{
       },
     });
 
-  const isDisabled = isCreating ? true : false;
+  const isDisabled = isUpdating ? true : false;
 
   const header = (
     <div className="flex h-full w-full flex-row items-center justify-center">
       <div className="flex flex-row gap-2">
-        <span className="text-lg font-bold">Create</span>
+        <span className="text-lg font-bold">Editing</span>
       </div>
     </div>
   );
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="w-full max-w-lg space-y-4 p-2">
+      <div className="flex w-full max-w-lg flex-col space-y-4 p-2">
         {header}
         <div className="w-full ">
           <div className="flex flex-col gap-4">
@@ -48,8 +52,8 @@ const EditChannelModal: React.FC<{
                 className="rounded bg-transparent p-1 outline outline-2 outline-rad-black-600 placeholder:text-sm placeholder:italic placeholder:text-rad-light-300/30 hover:outline-rad-black-400"
                 value={channelName}
                 onSubmit={() => {
-                  createChannel({
-                    serverId,
+                  updateChannel({
+                    channelId: channelId,
                     private: isPrivate,
                     title: channelName,
                   });
@@ -81,21 +85,37 @@ const EditChannelModal: React.FC<{
             </label>
           </div>
         </div>
-        <div className="flex flex-row justify-between">
+        <div className="flex w-full flex-row gap-2">
           <button
-            className="w-full rounded bg-rad-black-600 px-3 py-2 font-semibold first-letter:uppercase"
-            disabled={isDisabled}
+            className="flex w-fit items-center justify-center rounded px-2 font-semibold first-letter:uppercase disabled:text-rad-black-500"
+            disabled={
+              channelName === channel.name && isPrivate === channel.private
+                ? true
+                : false
+            }
+            onClick={(e) => {
+              e.preventDefault();
+              close();
+              console.log("Creating");
+            }}
+          >
+            reset
+          </button>
+
+          <button
+            className="flex w-full items-center justify-center rounded bg-rad-black-600 px-3 py-2 font-semibold first-letter:uppercase"
+            // disabled={isDisabled}
             onClick={(e) => {
               e.preventDefault();
               console.log("Creating");
-              createChannel({
-                serverId,
+              updateChannel({
+                channelId: channelId,
                 private: isPrivate,
                 title: channelName,
               });
             }}
           >
-            Create Channel
+            Save Changes
           </button>
         </div>
       </div>

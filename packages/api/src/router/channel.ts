@@ -25,6 +25,33 @@ export const ChannelRouter = createTRPCRouter({
       return foundChannel;
     }),
 
+
+
+  update: protectedProcedure
+    .input(
+      z.object({
+        title: z.string().or(z.undefined()),
+        private: z.boolean().or(z.undefined()),
+        channelId: z.string().or(z.undefined()),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const updatedChannel = await ctx.prisma.channels.update({
+        where: {
+          id: input.channelId
+        }, data: {
+          name: input.title,
+          private: input.private
+        }
+      })
+      console.log("Adderwer");
+      void Publisher.publish(
+        "updateServer",
+        JSON.stringify({ Channel: updatedChannel }),
+      );
+      return updatedChannel;
+    }),
+
   create: protectedProcedure
     .input(
       z.object({
