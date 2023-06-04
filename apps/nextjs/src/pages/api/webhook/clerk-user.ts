@@ -36,7 +36,7 @@ const handler = async (
     return res.status(400).json(e);
   }
   // res.send("done verifying secret");
-  console.log("done verifying secret");
+  console.log("done verifying secret", evt.type);
 
   // Handle the webhook
   const eventType = evt.type;
@@ -49,10 +49,10 @@ const handler = async (
       username,
       email_addresses,
       profile_image_url,
-      birthday,
-      gender,
-      created_at,
-      updated_at,
+      // birthday,
+      // gender,
+      // created_at,
+      // updated_at,
       // last_sign_in_at,
     } = evt.data;
 
@@ -60,8 +60,8 @@ const handler = async (
     const email = email_addresses[0].email_address;
     const emailVerified =
       email_addresses[0].verification?.status === "verified";
-    const createdAt: Date = new Date(created_at);
-    const updatedAt: Date = new Date(updated_at);
+    // const createdAt: Date = new Date(created_at);
+    // const updatedAt: Date = new Date(updated_at);
     // const lastSignInAt: Date = new Date(last_sign_in_at);
 
     try {
@@ -90,22 +90,25 @@ const handler = async (
   } else if (eventType === "user.deleted") {
     const { id } = evt.data;
 
-    if (!id)
+    if (!id) {
+      console.log("Invalid ID");
       return res
         .status(405)
         .end("Failed to delete user. Most propably user does not exists");
-
+    }
     try {
       await caller.user.delete({ id });
+      console.log("User Deleted");
       return res.status(200).end("user deleted");
     } catch (error) {
+      console.error(error);
+
       if (error instanceof TRPCError) {
         // An error from tRPC occured
         const httpCode = getHTTPStatusCodeFromError(error);
         return res.status(httpCode).json(error);
       }
       // Another error occured
-      console.error(error);
       res.status(500).json({ message: "Internal server error" });
     }
   }

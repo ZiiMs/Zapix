@@ -5,15 +5,23 @@ import { authMiddleware } from "@clerk/nextjs";
 
 export default authMiddleware({
   afterAuth(auth, req, evt) {
-    // console.log("Shoudlnt Be Showing");
+    // console.log("Shoudlnt Be Showing", auth);
     const url = req.nextUrl.clone();
-    if (!auth.userId) {
-      if (url.pathname === "/" || url.pathname === "/channels") {
-        url.pathname = "/login";
-        return NextResponse.redirect(url);
+    if (!url.pathname.startsWith("/api/")) {
+      console.log("Found", url.pathname);
+      if (!auth.userId) {
+        if (
+          url.pathname !== "/login" &&
+          url.pathname !== "/sso-callback" &&
+          url.pathname !== "/register"
+        ) {
+          console.log("NotAuthed", url.pathname);
+          url.pathname = "/login";
+          return NextResponse.redirect(url);
+        }
       }
     }
-    console.log("IsAuthed");
+    console.log("IsAuthed", auth.userId);
     if (url.pathname === "/" || url.pathname === "/channels") {
       url.pathname = "/channels/me";
       return NextResponse.redirect(url);
