@@ -1,9 +1,9 @@
-import { MouseEvent, MouseEventHandler, type ReactElement } from "react";
+import { type ReactElement } from "react";
 import Head from "next/head";
 // import { signIn } from "next-auth/react";
 // import { useSignIn } from "@clerk/clerk-react";
 import { useSignIn } from "@clerk/clerk-react";
-import { OAuthStrategy } from "@clerk/nextjs/dist/types/server";
+import { type OAuthStrategy } from "@clerk/nextjs/dist/types/server";
 
 import LoginLayout from "~/components/layout/login";
 import { type NextPageWithLayout } from "./_app";
@@ -50,7 +50,11 @@ const Login: NextPageWithLayout = () => {
       </Head>
       <div className="rounded bg-rad-black-900 p-4 shadow-black drop-shadow-xl">
         <button
-          onClick={() => SignInOauth("oauth_google")}
+          onClick={() =>
+            SignInOauth("oauth_google")
+              .then()
+              .catch((e) => console.error(e))
+          }
           className="w-full rounded bg-white p-2 font-medium text-rad-light-900 outline outline-1 outline-rad-black-400 hover:bg-rad-light-100 active:scale-95 active:bg-rad-light-100"
         >
           <span>Sign in with Google</span>

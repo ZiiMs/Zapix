@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 import { useSignUp } from "@clerk/clerk-react";
 
-import { api } from "~/utils/api";
+// import { api } from "~/utils/api";
 import LoginLayout from "~/components/layout/login";
 import { type NextPageWithLayout } from "./_app";
 
@@ -14,24 +14,9 @@ const Register: NextPageWithLayout = () => {
 
   const ref = useRef<HTMLInputElement | null>(null);
   const [username, setUsername] = useState("");
-  const [isSignOut, setSignOut] = useState(false);
   const router = useRouter();
-  const { mutate: CreateUser, status: createStatus } =
-    api.user.create.useMutation({
-      onSuccess: async (data) => {
-        console.log("NewUser: ", data);
-        await router.push("/");
-      },
-    });
 
   console.log(isLoaded, signUp);
-  const { mutate: DeleteUser, status: deleteStatus } =
-    api.user.delete.useMutation({
-      onSuccess: (data) => {
-        console.log("DeletedUser", data);
-        setSignOut(true);
-      },
-    });
 
   // const { data: session, status } = useSession();
 
@@ -56,7 +41,7 @@ const Register: NextPageWithLayout = () => {
         console.log(res);
         if (res.createdSessionId) {
           await setActive({ session: res.createdSessionId });
-          router.push("/");
+          await router.push("/");
         }
       }
     } catch (e) {
@@ -108,11 +93,10 @@ const Register: NextPageWithLayout = () => {
         <div className="flex w-full flex-row justify-between pt-4">
           <button
             className="rounded bg-rad-black-600 p-2"
-            disabled={createStatus === "loading"}
             onClick={(e) => {
               e.preventDefault();
               if (username !== "") {
-                handleUpdate();
+                handleUpdate().catch((e) => console.error(e));
               }
             }}
           >
